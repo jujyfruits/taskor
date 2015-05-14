@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Projects
+{% endblock title %}
+
+{% block content %}
+    <div>
+        <div class="row">
+            <div class="col-md-8">
+
+                <h3>Projects</h3>
+                {% for project in projects %}
+                    <div class="well">
+                        <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
+                        <span class="text-muted">{{ project.CreatedAt |date("F jS \\a\\t g:ia") }}</span>
+                        <p>{{ project.Description }}</p>
+                    </div>{% else %}
+                    Здесь будут отображаться ваши проекты.
+                {% endfor %}
+            </div>
+            <div class="col-md-4">
+                <h3>Latest updates</h3>
+                <span class="text-muted">Render latest events in all user's projects.</span>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

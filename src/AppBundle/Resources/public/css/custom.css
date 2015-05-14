@@ -1,0 +1,39 @@
+h3{
+    margin-top: 10.5px;
+}
+
+.navbar{
+    margin-bottom: 10.5px;
+}
+
+.top-navbar-text{
+    color: white;
+}
+
+.nav-bar-logout-container a.nav-bar-logout{
+    display: inline-block;
+}
+
+.glyphicon-log-out.glyphicon-white{
+    padding: 0 7px;
+}
+
+.glyphicon-white{
+    color: white;
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 100%;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 100%;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 100%;
+  }
+}

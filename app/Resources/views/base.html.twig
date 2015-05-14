@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block head %}
+        <link rel="stylesheet" href="{{ asset('bundles/appbundle/css/bootstrap.css') }}" />
+
+        {% stylesheets '@AppBundle/Resources/public/css/custom.css' filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+
+        <title>{% block title %} Task Tracker {% endblock title %}</title>
+    {% endblock head %}
+
+    {% block body_container %}
+        <body>
+            {% block body %}
+                {% block header %}
+                    <div class="navbar navbar-default">
+                        <div class="container">
+                            <a href="/project" class="navbar-brand">Watchtower</a>
+                            <ul class="nav navbar-nav">
+                                {% block navbar %}
+                                    <li><a href="/project">Проекты</a></li>
+                                    <li><a href="/">Задания</a></li>
+                                    <li><a href="/">Пользователи</a></li>
+                                        {% if is_granted('ROLE_USER') %}
+                                        <li><a href="{{ path("project_create") }}">Create new Project</a></li>
+                                        {% endif %}
+                                    {% endblock navbar %}
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li class="nav-bar-logout-container">
+                                    <span class="top-navbar-text">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span>
+                                    <a class="nav-bar-logout" href="logout">Выйти
+                                        <span class="glyphicon glyphicon-align-left glyphicon-log-out glyphicon-white" aria-hidden="true"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endblock %}
+
+                <div class="container">
+                    {% if is_granted('ROLE_USER') %}
+                        ROLE_USER
+                    {% endif %}
+                    {% if is_granted('ROLE_MANAGER') %}
+                        ROLE_MANAGER
+                    {% endif %}
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        ROLE_SUPER_ADMIN
+                    {% endif %}
+                </div>
+
+                <div class="container">
+
+                    {% block content %}
+                    {% endblock %}
+
+                    {% block footer %}
+                        <div class="footer text-center">
+                            <hr><a href="#">Skovoroda Production</a>
+                        </div>
+                    {% endblock  %}
+
+                </div>
+            {% endblock body %}
+        </body>
+    {% endblock body_container %}
+</html>

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Creating new project
+{% endblock %}
+
+{% block content %}
+    
+    <form action="{{ path("project_create") }}" method="post">
+
+        {{ form_widget(form) }}
+
+        <input type="submit" class="symfony-button-grey" value="Create new" />
+    </form>
+
+{% endblock %}

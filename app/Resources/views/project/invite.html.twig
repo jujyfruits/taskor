@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Inviting to a project
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        <h3>Inviting to <strong>{{ project.Name }}</strong></h3>
+
+        <div class="well">
+            <h3>{{ project.Name }}</h3>
+            {{ project.CreatedAt|date("F jS \\a\\t g:ia") }}
+            <p>{{ project.Description }}</p>
+        </div>
+    </div>
+
+
+    <form action="{{ path("invite_to_project", {'id': id}) }}" method="post">
+
+        {{ form_widget(form) }}
+
+        <input type="submit" class="symfony-button-grey" value="Create new" />
+    </form>
+
+{% endblock %}

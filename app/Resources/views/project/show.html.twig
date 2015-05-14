@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Project {{ project.Name }}
+{% endblock title %}
+
+{% block content %}
+
+    <div>
+        <h3>{{ project.Name }}</h3>
+        <a href="/project/{{ id }}/invite">Добавить участников</a>
+        <div class="well">
+            <h3>{{ project.Name }}</h3>
+            {{ project.CreatedAt|date("F jS \\a\\t g:ia") }}
+            <p>{{ project.Description }}</p>
+        </div>
+    </div>
+
+{% endblock content %}

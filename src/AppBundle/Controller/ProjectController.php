@@ -19,16 +19,20 @@ class ProjectController extends Controller {
 
         $user = $this->container->get('security.context')->getToken()->getUser();
         $user_projects = $user->getProject();
-        //print_r(get_class_methods($user));
 
-        return $this->render('project/index.html.twig', array('projects' => $projects));
+
+        return $this->render('project/index.html.twig', array(
+                    'projects' => $projects,
+                    'user_projects' => $user_projects
+        ));
     }
 
     /**
      * @Route("/project/new", name="project_create")
      */
     public function createAction() {
-        /* CUSTOM REPOSITORY QUERIES
+        /*
+          CUSTOM REPOSITORY QUERIES
           $em = $this->getDoctrine()->getEntityManager();
           $users = $em->getRepository('AppBundle:Project')
           ->findOfThisUser();
@@ -63,7 +67,6 @@ class ProjectController extends Controller {
         }
 
         $users = $em->getRepository('AppBundle:User')->findNotParticipantsOfProject($id);
-
 
         $usernames = array();
 

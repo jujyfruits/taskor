@@ -1,0 +1,64 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\TaskRepository")
+ * @ORM\Table(name="task")
+ */
+class Task {
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(type="string", length=50) 
+     */
+    protected $name;
+
+    /**
+     * @ORM\Column(type="string", length=255) 
+     */
+    protected $description;
+
+    /**
+     * @ORM\Column(type="string", length=50) 
+     */
+    protected $state;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $estimated_time;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $spended_time;
+
+    /**
+     * @ORM\Column(type="datetime", length=50) 
+     */
+    protected $created_at;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="parent")
+     * */
+    protected $children;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Task", inversedBy="children")
+     * */
+    protected $parent;
+
+    public function __construct() {
+        $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+}

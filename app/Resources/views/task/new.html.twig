@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Creating new task
+{% endblock %}
+
+{% block content %}
+    <h3>Новая задача в проекте <strong>{{ project.Name }}</strong></h3>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="{{ path("task_create",{'project_id':project.id}) }}" method="post">
+
+                {{ form_widget(form) }}
+
+                <input type="submit" class="button simple-button" value="Создать" />
+                <button type="button" class="button finish-button">Добавить подзадачу</button>
+            </form>
+            <script>
+                function addButtonPressed() {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('ajax_add_task_form') }}",
+                        cache: false,
+                        success: function () {
+                            console.log('ajax responsed');
+                        }
+                    });
+                }
+
+                $(document).ready(function () {
+                    $('button').on('click', function () {
+                        addButtonPressed();
+                    });
+                });
+            </script>
+        </div>
+    </div>
+{% endblock %}

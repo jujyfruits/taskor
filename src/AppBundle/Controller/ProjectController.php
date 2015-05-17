@@ -31,13 +31,6 @@ class ProjectController extends Controller {
      * @Route("/project/new", name="project_create")
      */
     public function createAction() {
-        /*
-          CUSTOM REPOSITORY QUERIES
-          $em = $this->getDoctrine()->getEntityManager();
-          $users = $em->getRepository('AppBundle:Project')
-          ->findOfThisUser();
-         */
-
         $project = new Project();
         $form = $this->createFormBuilder($project)
                 ->add('name', 'text')
@@ -68,30 +61,25 @@ class ProjectController extends Controller {
 
         $users = $em->getRepository('AppBundle:User')->findNotParticipantsOfProject($id);
 
-        $usernames = array();
-
-        foreach ($users as $user) {
-            $usernames[$user->getUsername()] = $user->getUsername();
-        }
-
+        echo get_class($users);
         $form = $this->createFormBuilder()
-                ->add('usernames', 'choice', [
-                    'choices' => $usernames,
+                ->add('users', 'entity', array(
+                    'class' => 'AppBundle:User',
+                    'choices' => $users,
+                    'property' => 'username',
                     'multiple' => true,
                     'expanded' => true
-                ])
+                ))
                 ->getForm();
 
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
-            $usernames = $form->getData()['usernames'];
+            $users = $form->getData()['users'];
             if ($form->isValid()) {
-                foreach ($usernames as $username) {
-                    $user = $em->getRepository('AppBundle:User')->findOneBy(array('username' => $username));
+                foreach ($users as $user) {
                     $project->addUser($user);
                     $user->addProject($project);
-
                     $em->persist($project);
                     $em->persist($user);
                 }
@@ -115,10 +103,18 @@ class ProjectController extends Controller {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
 
-        return $this->render('project/show.html.twig', array('project' => $project, 'id' => $id));
+        $all_tasks = $em->getRepository('AppBundle:Task')->findAll();
+
+        return $this->render('project/show.html.twig', array(
+                    'project' => $project,
+                    'id' => $id,
+                    'all_tasks' => $all_tasks
+        ));
     }
 
-    /*  Action to add by UserName in text field   
+}
+
+/*  Action to add by UserName in text field   
      * 
      * 
       public function inviteToProjectAction($id) {
@@ -152,4 +148,3 @@ class ProjectController extends Controller {
       'id' => $id));
       }
      */
-}

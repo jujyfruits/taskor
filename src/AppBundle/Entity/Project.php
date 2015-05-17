@@ -38,10 +38,16 @@ class Project {
      **/
     private $user;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="project")
+     **/
+    private $task;
+    
 
     public function __construct() {
         $this->created_at = new \DateTime();
         $this->user = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->task = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -148,5 +154,38 @@ class Project {
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Add task
+     *
+     * @param \AppBundle\Entity\Task $task
+     * @return Project
+     */
+    public function addTask(\AppBundle\Entity\Task $task)
+    {
+        $this->task[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task
+     *
+     * @param \AppBundle\Entity\Task $task
+     */
+    public function removeTask(\AppBundle\Entity\Task $task)
+    {
+        $this->task->removeElement($task);
+    }
+
+    /**
+     * Get task
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTask()
+    {
+        return $this->task;
     }
 }

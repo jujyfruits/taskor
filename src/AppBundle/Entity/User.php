@@ -23,16 +23,22 @@ class User extends BaseUser {
      */
     protected $avatar;
 
-
     /**
      * @ORM\ManyToMany(targetEntity="Project", mappedBy="user")
      **/
     private $project;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="user")
+     **/
+    private $task;
+    
+    
     public function __construct()
     {
         parent::__construct();
         $this->project = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->task = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     
@@ -102,5 +108,38 @@ class User extends BaseUser {
     public function getProject()
     {
         return $this->project;
+    }
+
+    /**
+     * Add task
+     *
+     * @param \AppBundle\Entity\Task $task
+     * @return User
+     */
+    public function addTask(\AppBundle\Entity\Task $task)
+    {
+        $this->task[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task
+     *
+     * @param \AppBundle\Entity\Task $task
+     */
+    public function removeTask(\AppBundle\Entity\Task $task)
+    {
+        $this->task->removeElement($task);
+    }
+
+    /**
+     * Get task
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTask()
+    {
+        return $this->task;
     }
 }

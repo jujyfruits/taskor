@@ -4,15 +4,57 @@
     Project {{ project.Name }}
 {% endblock title %}
 
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('task_create',{'project_id':id}) }}">Создать новую задачу</a></li>
+        <li><a href="/project/{{ id }}/invite">Добавить участников</a></li>
+        {% endif %}
+    {% endblock additional_navbar_pills %}
+
 {% block content %}
 
-    <div>
-        <h3>{{ project.Name }}</h3>
-        <a href="/project/{{ id }}/invite">Добавить участников</a>
-        <div class="well">
+    <div class="row">
+        <div class="col-xs-12">
             <h3>{{ project.Name }}</h3>
-            {{ project.CreatedAt|date("jS F Y \\a\\t H:i") }}
-            <p>{{ project.Description }}</p>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="task-group-container">
+                        <span class="task-group-header">Все задачи</span>
+                        {% for task in all_tasks %}
+                            <div class="task-container {% if task.state  == 'Done'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
+                                <div class="row">
+                                    <div class="col-xs-8">
+                                        {{ task.name }}
+                                    </div>
+                                    <div class="col-xs-4">
+                                        {{ task.createdAt |date("d/m/Y H:i") }}
+                                    </div>
+                                    <div class="col-xs-12">
+                                        {{ task.estimatedtime }} hours 
+                                    </div>
+                                    <div class="col-xs-12">
+                                        {{ task.description }}
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <div class="pull-right">
+                                            {% if task.state  == 'Started'%}
+                                                <button type="button" class="button alert-button">Отказаться</button>
+                                                <button type="button" class="button finish-button">Закончить</button>
+                                            {% elseif task.state == 'Unstarted' %}
+                                                <button type="button" class="button success-button">Начать</button>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

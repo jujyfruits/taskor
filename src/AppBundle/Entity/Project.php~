@@ -38,10 +38,16 @@ class Project {
      **/
     private $user;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="project")
+     **/
+    private $task;
+    
 
     public function __construct() {
         $this->created_at = new \DateTime();
         $this->user = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->task = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**

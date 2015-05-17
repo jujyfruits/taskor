@@ -57,6 +57,16 @@ class Task {
      * */
     protected $parent;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="Project", inversedBy="task")
+     * */
+    protected $project;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="task")
+     * */
+    protected $user;
+
     public function __construct() {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -264,5 +274,51 @@ class Task {
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * Set project
+     *
+     * @param \AppBundle\Entity\Project $project
+     * @return Task
+     */
+    public function setProject(\AppBundle\Entity\Project $project = null)
+    {
+        $this->project = $project;
+
+        return $this;
+    }
+
+    /**
+     * Get project
+     *
+     * @return \AppBundle\Entity\Project 
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     * @return Task
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

@@ -4,6 +4,13 @@
     Projects
 {% endblock title %}
 
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path("project_create") }}">Создать новый проект</a></li>
+    {% endif %}
+{% endblock additional_navbar_pills %}
+
+
 {% block content %}
     <div>
         <div class="row">

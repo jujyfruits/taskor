@@ -10,6 +10,10 @@
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
 
+        {% javascripts '@AppBundle/Resources/public/js/jquery-1.11.3.min.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+
         <title>{% block title %} Task Tracker {% endblock title %}</title>
     {% endblock head %}
 
@@ -25,10 +29,13 @@
                                     <li><a href="/project">Проекты</a></li>
                                     <li><a href="/">Задания</a></li>
                                     <li><a href="/">Пользователи</a></li>
-                                        {% if is_granted('ROLE_USER') %}
-                                        <li><a href="{{ path("project_create") }}">Create new Project</a></li>
-                                        {% endif %}
-                                    {% endblock navbar %}
+                                    <span class="navbar-additional-pills">
+                                        <ul class="nav navbar-nav">
+                                            {% block additional_navbar_pills %}
+                                            {% endblock %}
+                                        </ul>
+                                    </span>
+                                {% endblock navbar %}
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="nav-bar-logout-container">

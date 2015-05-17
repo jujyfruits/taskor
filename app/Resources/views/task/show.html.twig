@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Task {{ task.Name }}
+{% endblock title %}
+
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
+        {% endif %}
+    {% endblock additional_navbar_pills %}
+
+{% block content %}
+
+    <div>
+        <h3>{{ project.Name }} - {{ task.Name }}</h3>
+        {{  task.Description }} 
+        {{ task.EstimatedTime }} 
+    </div>
+
+{% endblock content %}

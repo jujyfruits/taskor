@@ -109,4 +109,37 @@ class User extends BaseUser {
     {
         return $this->project;
     }
+
+    /**
+     * Add task
+     *
+     * @param \AppBundle\Entity\Task $task
+     * @return User
+     */
+    public function addTask(\AppBundle\Entity\Task $task)
+    {
+        $this->task[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task
+     *
+     * @param \AppBundle\Entity\Task $task
+     */
+    public function removeTask(\AppBundle\Entity\Task $task)
+    {
+        $this->task->removeElement($task);
+    }
+
+    /**
+     * Get task
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTask()
+    {
+        return $this->task;
+    }
 }

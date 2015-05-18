@@ -18,17 +18,17 @@ class Task {
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=50) 
+     * @ORM\Column(type="string", length=50)
      */
     protected $name;
 
     /**
-     * @ORM\Column(type="string", length=255) 
+     * @ORM\Column(type="string", length=255)
      */
     protected $description;
 
     /**
-     * @ORM\Column(type="string", length=50) 
+     * @ORM\Column(type="string", length=50)
      */
     protected $state;
 
@@ -43,10 +43,10 @@ class Task {
     protected $spended_time;
 
     /**
-     * @ORM\Column(type="datetime", length=50) 
+     * @ORM\Column(type="datetime", length=50)
      */
     protected $created_at;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="Task", mappedBy="parent")
      * */
@@ -61,11 +61,16 @@ class Task {
      * @ORM\ManyToOne(targetEntity="Project", inversedBy="task")
      * */
     protected $project;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="task")
      * */
     protected $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Sprint", inversedBy="task")
+     */
+    protected $sprint;
 
     public function __construct() {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
@@ -75,7 +80,7 @@ class Task {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -98,7 +103,7 @@ class Task {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -121,7 +126,7 @@ class Task {
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription()
     {
@@ -144,7 +149,7 @@ class Task {
     /**
      * Get state
      *
-     * @return string 
+     * @return string
      */
     public function getState()
     {
@@ -167,7 +172,7 @@ class Task {
     /**
      * Get estimated_time
      *
-     * @return integer 
+     * @return integer
      */
     public function getEstimatedTime()
     {
@@ -190,7 +195,7 @@ class Task {
     /**
      * Get spended_time
      *
-     * @return integer 
+     * @return integer
      */
     public function getSpendedTime()
     {
@@ -213,7 +218,7 @@ class Task {
     /**
      * Get created_at
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -246,7 +251,7 @@ class Task {
     /**
      * Get children
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getChildren()
     {
@@ -269,7 +274,7 @@ class Task {
     /**
      * Get parent
      *
-     * @return \AppBundle\Entity\Task 
+     * @return \AppBundle\Entity\Task
      */
     public function getParent()
     {
@@ -292,7 +297,7 @@ class Task {
     /**
      * Get project
      *
-     * @return \AppBundle\Entity\Project 
+     * @return \AppBundle\Entity\Project
      */
     public function getProject()
     {
@@ -315,10 +320,33 @@ class Task {
     /**
      * Get user
      *
-     * @return \AppBundle\Entity\User 
+     * @return \AppBundle\Entity\User
      */
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set sprint
+     *
+     * @param \AppBundle\Entity\Sprint $sprint
+     * @return Task
+     */
+    public function setSprint(\AppBundle\Entity\Sprint $sprint = null)
+    {
+        $this->sprint = $sprint;
+
+        return $this;
+    }
+
+    /**
+     * Get sprint
+     *
+     * @return \AppBundle\Entity\Sprint 
+     */
+    public function getSprint()
+    {
+        return $this->sprint;
     }
 }

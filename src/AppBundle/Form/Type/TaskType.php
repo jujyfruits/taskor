@@ -5,6 +5,7 @@ namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Choice;
 
 class TaskType extends AbstractType {
 
@@ -12,6 +13,9 @@ class TaskType extends AbstractType {
         $builder->add('name', 'text');
         $builder->add('description', 'textarea');
         $builder->add('estimated_time', 'integer');
+        $builder->add('sprint', 'choice', array(
+          'choices' => $this->sprints
+        ));
 
         if (!empty($this->parent_task)) {
             $builder->add('parent', 'entity', array(
@@ -36,9 +40,15 @@ class TaskType extends AbstractType {
         $builder->add('saveAndAdd', 'submit', array('attr' => array('class' => 'button finish-button'), 'label' => 'Создать и добавить подзадачу'));
     }
 
-    function __construct($parent_task, $task_arr) {
+    function __construct($parent_task, $task_arr, $project) {
         $this->parent_task = $parent_task;
         $this->task_arr = $task_arr;
+
+        $interval = date_diff((new \DateTime()), $project->getCreatedAt())->days;
+        $current_sprint = floor($interval/7);
+        $this->sprints = array();
+
+        for($i=0; $i<10; $this->sprints[]=$current_sprint+$i, $i++);
     }
 
     public function getName() {

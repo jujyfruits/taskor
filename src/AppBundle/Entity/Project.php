@@ -18,42 +18,48 @@ class Project {
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=50) 
+     * @ORM\Column(type="string", length=50)
      */
     protected $name;
 
     /**
-     * @ORM\Column(type="string", length=255) 
+     * @ORM\Column(type="string", length=255)
      */
     protected $description;
 
     /**
-     * @ORM\Column(type="datetime", length=50) 
+     * @ORM\Column(type="datetime", length=50)
      */
     protected $created_at;
-    
+
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="project")
      * @ORM\JoinTable(name="users_projects")
      **/
     private $user;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="Task", mappedBy="project")
      **/
     private $task;
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="Sprint", mappedBy="project")
+     */
+    private $sprint;
+
 
     public function __construct() {
         $this->created_at = new \DateTime();
         $this->user = new \Doctrine\Common\Collections\ArrayCollection();
         $this->task = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->sprint = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId() {
         return $this->id;
@@ -74,7 +80,7 @@ class Project {
     /**
      * Get name
      *
-     * @return string 
+     * @return string
      */
     public function getName() {
         return $this->name;
@@ -95,7 +101,7 @@ class Project {
     /**
      * Get description
      *
-     * @return string 
+     * @return string
      */
     public function getDescription() {
         return $this->description;
@@ -116,10 +122,10 @@ class Project {
     /**
      * Get created_at
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt() {
-        return $this->created_at->format('Y-m-d H:i:s');
+        return $this->created_at;
     }
 
 
@@ -149,7 +155,7 @@ class Project {
     /**
      * Get user
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getUser()
     {
@@ -182,10 +188,43 @@ class Project {
     /**
      * Get task
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTask()
     {
         return $this->task;
+    }
+
+    /**
+     * Add sprint
+     *
+     * @param \AppBundle\Entity\Sprint $sprint
+     * @return Project
+     */
+    public function addSprint(\AppBundle\Entity\Sprint $sprint)
+    {
+        $this->sprint[] = $sprint;
+
+        return $this;
+    }
+
+    /**
+     * Remove sprint
+     *
+     * @param \AppBundle\Entity\Sprint $sprint
+     */
+    public function removeSprint(\AppBundle\Entity\Sprint $sprint)
+    {
+        $this->sprint->removeElement($sprint);
+    }
+
+    /**
+     * Get sprint
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSprint()
+    {
+        return $this->sprint;
     }
 }

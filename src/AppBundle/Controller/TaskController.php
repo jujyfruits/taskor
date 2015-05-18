@@ -56,7 +56,7 @@ class TaskController extends Controller {
         }
         $task_arr = $project->getTask();
         $task = new Task();
-        $form = $this->createForm(new TaskType($parent_task, $task_arr), $task);
+        $form = $this->createForm(new TaskType($parent_task, $task_arr, $project), $task);
 
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {

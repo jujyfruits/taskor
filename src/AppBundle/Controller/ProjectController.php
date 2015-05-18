@@ -11,7 +11,7 @@ use AppBundle\Entity\User;
 class ProjectController extends Controller {
 
     /**
-     * @Route("/project/", name="project_index")
+     * @Route("/", name="project_index")
      */
     public function indexAction() {
         $em = $this->getDoctrine()->getEntityManager();

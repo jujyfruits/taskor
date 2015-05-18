@@ -35,7 +35,9 @@ class TaskController extends Controller {
         return $this->render('task/show.html.twig', array(
                     'project' => $project,
                     'project_id' => $project_id,
-                    'task' => $task));
+                    'task' => $task,
+                    'child_tasks' => $task->getChildren(),
+          ));
     }
 
     /**

@@ -61,7 +61,6 @@ class ProjectController extends Controller {
 
         $users = $em->getRepository('AppBundle:User')->findNotParticipantsOfProject($id);
 
-        echo get_class($users);
         $form = $this->createFormBuilder()
                 ->add('users', 'entity', array(
                     'class' => 'AppBundle:User',
@@ -115,9 +114,9 @@ class ProjectController extends Controller {
 
 }
 
-/*  Action to add by UserName in text field   
-     * 
-     * 
+/*  Action to add by UserName in text field
+     *
+     *
       public function inviteToProjectAction($id) {
       $em = $this->getDoctrine()->getEntityManager();
       $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));

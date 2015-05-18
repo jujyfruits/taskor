@@ -42,7 +42,7 @@ class TaskController extends Controller {
 
     /**
      * @Route("/project/{project_id}/task/new/", name="task_create",  defaults={"parent_task_id" = null})
-     * @Route("/project/{project_id}/task/{parent_task_id}/new/")
+     * @Route("/project/{project_id}/task/{parent_task_id}/new/", name="task_create_child")
      */
     public function createAction($project_id, $parent_task_id) {
         $em = $this->getDoctrine()->getEntityManager();
@@ -70,7 +70,8 @@ class TaskController extends Controller {
                 $em->flush();
                 $task_id = $task->getId();
                 if ($form->get('saveAndAdd')->isClicked()) {
-                      return $this->redirectToRoute('task_create', array(
+                  dump($form->get('saveAndAdd')->isClicked());
+                      return $this->redirectToRoute('task_create_child', array(
                       'project_id' => $project_id,
                       'parent_task_id' => $task_id));
 

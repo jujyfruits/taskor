@@ -13,9 +13,7 @@ class TaskType extends AbstractType {
         $builder->add('name', 'text');
         $builder->add('description', 'textarea');
         $builder->add('estimated_time', 'integer');
-        $builder->add('sprint', 'choice', array(
-          'choices' => $this->sprints
-        ));
+        //$builder->add('sprint', 'choice', array('choices' => $this->sprints));
 
         if (!empty($this->parent_task)) {
             $builder->add('parent', 'entity', array(

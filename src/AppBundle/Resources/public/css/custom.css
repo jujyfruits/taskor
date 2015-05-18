@@ -14,6 +14,23 @@
     }
 }
 
+.btn:hover, .btn:focus, .btn.focus {
+    color: #fff;
+}
+
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn.focus:active, .btn.active.focus {
+    outline: 0;
+}
+
+select::-moz-focus-inner {
+  border: 0;
+}
+
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #6F6F6F;
+}
+
 body{
     font-family: Helvetica,sans-serif;
 }
@@ -73,6 +90,11 @@ h3{
     background: -ms-linear-gradient(top, rgba(148,148,148,1) 0%, rgba(61,61,61,1) 53%, rgba(51,51,51,1) 100%);
     background: linear-gradient(to bottom, rgba(148,148,148,1) 0%, rgba(61,61,61,1) 53%, rgba(51,51,51,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#949494', endColorstr='#333333', GradientType=0 );
+}
+
+.task-link-name{
+    color: #3d3d3d;
+    text-decoration: underline;
 }
 
 .task-container{

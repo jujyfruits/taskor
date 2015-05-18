@@ -11,9 +11,7 @@
             <form action="{{ path("task_create",{'project_id':project.id}) }}" method="post">
 
                 {{ form_widget(form) }}
-
-                <input type="submit" class="button simple-button" value="Создать" />
-                <button type="button" class="button finish-button">Добавить подзадачу</button>
+                
             </form>
             <script>
                 function addButtonPressed() {

@@ -94,7 +94,7 @@ class ProjectController extends Controller {
     }
 
     /**
-     * @Route("/project/{id}", requirements={"id" = "\d+"}, name="project_show")
+     * @Route("/project/{id}/", requirements={"id" = "\d+"}, name="project_show")
      */
     public function showAction($id) {
         $em = $this->getDoctrine()->getEntityManager();
@@ -103,7 +103,8 @@ class ProjectController extends Controller {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
 
-        $all_tasks = $em->getRepository('AppBundle:Task')->findAll();
+        $all_tasks = $project->getTask();
+        //$all_tasks = $em->getRepository('AppBundle:Task')->findAll();
 
         return $this->render('project/show.html.twig', array(
                     'project' => $project,

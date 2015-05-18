@@ -27,7 +27,9 @@
                             <div class="task-container {% if task.state  == 'Done'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
                                 <div class="row">
                                     <div class="col-xs-8">
-                                        {{ task.name }}
+                                        <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">
+                                            {{ task.name }}
+                                        </a>
                                     </div>
                                     <div class="col-xs-4">
                                         {{ task.createdAt |date("d/m/Y H:i") }}

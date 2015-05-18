@@ -12,23 +12,34 @@ class TaskType extends AbstractType {
         $builder->add('name', 'text');
         $builder->add('description', 'textarea');
         $builder->add('estimated_time', 'integer');
-        $builder->add('parent', 'entity', array(
-            'label' => 'Parent task',
-            'class' => 'AppBundle:Task',
-            'choices' => $this->task_arr,
-            'property' => 'name',
-            'placeholder' => 'Choose parent task',
-            'required' => false,
-            'empty_data' => null
-        ));
-        $builder->add('save', 'submit', array('label' => 'Создать задачу'));
-        $builder->add('saveAndAdd', 'submit', array('label' => 'Создать и добавить новую'));
+
+        if (!empty($this->parent_task)) {
+            $builder->add('parent', 'entity', array(
+                'label' => 'Parent task',
+                'class' => 'AppBundle:Task',
+                'choices' => $this->parent_task,
+                'property' => 'name'
+            ));
+        } else {
+            $builder->add('parent', 'entity', array(
+                'label' => 'Parent task',
+                'class' => 'AppBundle:Task',
+                'choices' => $this->task_arr,
+                'property' => 'name',
+                'placeholder' => 'Choose parent task',
+                'required' => false,
+                'empty_data' => null
+            ));
+        }
+
+        $builder->add('save', 'submit', array('attr' => array('class' => 'button simple-button'), 'label' => 'Создать задачу'));
+        $builder->add('saveAndAdd', 'submit', array('attr' => array('class' => 'button finish-button'), 'label' => 'Создать и добавить подзадачу'));
     }
-    
-function __construct($task,$task_arr) {
-    $this->task = $task;
-    $this->task_arr = $task_arr;
-}
+
+    function __construct($parent_task, $task_arr) {
+        $this->parent_task = $parent_task;
+        $this->task_arr = $task_arr;
+    }
 
     public function getName() {
         return 'task';

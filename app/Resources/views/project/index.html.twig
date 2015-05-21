@@ -7,50 +7,57 @@
 {% block additional_navbar_pills %}
     {% if is_granted('ROLE_MANAGER') %}
         <li><a href="{{ path("project_create") }}">Создать новый проект</a></li>
-    {% endif %}
-{% endblock additional_navbar_pills %}
-
+        {% endif %}
+    {% endblock additional_navbar_pills %}
 
 {% block content %}
     <div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <h3>Ваши проекты</h3>
                 {% for project in user_projects %}
                     <div class="well">
                         <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
                         <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
+                        {% if is_granted('ROLE_MANAGER') %}
+                            <span class="pull-right">
+                                <a href="{{ path('project_edit', {'id':project.id }) }}" title="Редактировать"><span class="glyphicon glyphicon-pencil"></span></a>
+                                <a href="{{ path('invite_to_project', {'id':project.id }) }}"title="Добавить пользователей"><span class="glyphicon glyphicon-user"></span></a>
+                                <a href="" title="Архивировать"><span class="glyphicon glyphicon-save"></span></a>
+                            </span>
+                        {% endif %}
                         <p>{{ project.Description }}</p>
+
                     </div>{% else %}
                     Здесь будут отображаться ваши проекты.
                 {% endfor %}
             </div>
 
-            <div class="col-md-4">
-                <h3>Latest updates</h3>
+            <div class="col-md-6">
+                <h3>Последние события</h3>
                 <span class="text-muted">Render latest events in all user's projects.</span>
             </div>
-
         </div>
 
         <div class="row">
-
-            <div class="col-xs-12">
-                <h3>Все проекты</h3>
-                <div class="row">
-                    {% for project in projects %}
-                        <div class="col-md-4">
-                            <div class="well">
-                                <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
-                                <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
-                                <p>{{ project.Description }}</p>
+            {% if is_granted('ROLE_MANAGER') %}
+                <div class="col-xs-12">
+                    <h3>Все проекты</h3>
+                    <div class="row">
+                        {% for project in projects %}
+                            <div class="col-md-4">
+                                <div class="well">
+                                    <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
+                                    <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
+                                    <p>{{ project.Description }}</p>
+                                </div>
                             </div>
-                        </div>
-                    {% else %}
-                        Здесь будут отображаться ваши проекты.
-                    {% endfor %}
+                        {% else %}
+                            Здесь будут отображаться все проекты.
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
 
         </div>
     </div>

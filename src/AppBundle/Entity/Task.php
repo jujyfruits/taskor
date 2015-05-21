@@ -33,7 +33,7 @@ class Task {
     protected $state;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $estimated_time;
 

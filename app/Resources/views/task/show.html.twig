@@ -2,26 +2,41 @@
 
 {% block title %}
     Task {{ task.Name }}
-{% endblock title %}
+{% endblock %}
 
 {% block additional_navbar_pills %}
     {% if is_granted('ROLE_MANAGER') %}
         <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
+        <li><a href="{{ path('subtask_create',{'project_id':project.id,'parent_task_id':task.Id}) }}">Создать подзадачу текущей</a></li>
         {% endif %}
-    {% endblock additional_navbar_pills %}
+    {% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('project_show',{'id':project.Id}) }}">{{ project.Name }}</a>
+        &mdash;
+        {% for task_parent in task_parents %}
+            <a href="{{ path('task_show',{'project_id':project.Id,'task_id':task_parent.Id}) }}">
+                {{ task_parent.Name }}
+            </a>
+            &mdash;
+        {% endfor %}
+        {{ task.Name }}
+    </h3>
+{% endblock %}
 
 {% block content %}
 
     <div>
-        <h3><a href="{{ path('project_show', {id: project.id}) }}">{{ project.Name }}</a> - {{ task.Name }}</h3>
+        <h3>{{ task.Name }}</h3>
         {{  task.Description }}
         {{ task.EstimatedTime }}
     </div>
 
     <ul class="list-group">
-      {% for task_child in child_tasks %}
-        <li class="list-group-item"><a href="{{ path('task_show', {project_id: project_id, task_id: task_child.id}) }}">{{ task_child.Name }}</a></li>
-      {% endfor %}
+        {% for task_child in child_tasks %}
+            <li class="list-group-item"><a href="{{ path('task_show', {project_id: project_id, task_id: task_child.id}) }}">{{ task_child.Name }}</a></li>
+            {% endfor %}
     </ul>
 
 {% endblock content %}

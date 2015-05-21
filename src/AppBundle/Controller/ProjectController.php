@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Project;
 use AppBundle\Entity\User;
+use AppBundle\Form\Type\ProjectType;
 
 class ProjectController extends Controller {
 
@@ -16,11 +17,8 @@ class ProjectController extends Controller {
     public function indexAction() {
         $em = $this->getDoctrine()->getEntityManager();
         $projects = $em->getRepository('AppBundle:Project')->findAll();
-
         $user = $this->container->get('security.context')->getToken()->getUser();
         $user_projects = $user->getProject();
-
-
         return $this->render('project/index.html.twig', array(
                     'projects' => $projects,
                     'user_projects' => $user_projects
@@ -32,15 +30,14 @@ class ProjectController extends Controller {
      */
     public function createAction() {
         $project = new Project();
-        $form = $this->createFormBuilder($project)
-                ->add('name', 'text')
-                ->add('description', 'textarea')
-                ->getForm();
+        $form = $this->createForm(new ProjectType(), $project);
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
             if ($form->isValid()) {
                 $em = $this->getDoctrine()->getEntityManager();
+                $user = $this->container->get('security.context')->getToken()->getUser();
+                $project->addUser($user);
                 $em->persist($project);
                 $em->flush();
                 return $this->redirectToRoute('project_index');
@@ -58,11 +55,10 @@ class ProjectController extends Controller {
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
-
         $users = $em->getRepository('AppBundle:User')->findNotParticipantsOfProject($id);
-
         $form = $this->createFormBuilder()
                 ->add('users', 'entity', array(
+                    'label' => 'Отсутствующие пользователи',
                     'class' => 'AppBundle:User',
                     'choices' => $users,
                     'property' => 'username',
@@ -70,7 +66,6 @@ class ProjectController extends Controller {
                     'expanded' => true
                 ))
                 ->getForm();
-
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
@@ -102,13 +97,71 @@ class ProjectController extends Controller {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
 
-        $all_tasks = $project->getTask();
-        //$all_tasks = $em->getRepository('AppBundle:Task')->findAll();
+        $sprints = $project->getSprint();
+        foreach ($sprints as $sprint) {
+            $sprint->getTask();
+        }
 
+        $all_tasks = $project->getTask();
+        //$all_tasks = $em->getRepository('AppBundle:Task')->findAll()ж
         return $this->render('project/show.html.twig', array(
                     'project' => $project,
                     'id' => $id,
-                    'all_tasks' => $all_tasks
+                    'all_tasks' => $all_tasks,
+                    'sprints' => $sprints
+        ));
+    }
+
+    /**
+     * @Route("/project/{id}/edit", requirements={"id" = "\d+"}, name="project_edit")
+     */
+    public function editAction($id) {
+        $em = $this->getDoctrine()->getEntityManager();
+        $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));
+        if (!$project) {
+            throw $this->createNotFoundException('Unable to find requested project.');
+        }
+        $form = $this->createForm(new ProjectType(), $project);
+        $request = $this->get('request');
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+            if ($form->isValid()) {
+                $em->persist($project);
+                $em->flush();
+                return $this->redirectToRoute('project_index');
+            }
+        }
+        return $this->render('project/edit.html.twig', array(
+                    'project' => $project,
+                    'form' => $form->createView()
+        ));
+    }
+
+    /**
+     * @Route("/project/{id}/archive", requirements={"id" = "\d+"}, name="project_archive")
+     */
+    public function archiveAction($id) {
+        $em = $this->getDoctrine()->getEntityManager();
+        $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));
+        if (!$project) {
+            throw $this->createNotFoundException('Unable to find requested project.');
+        }
+
+        $request = $this->get('request');
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getEntityManager();
+                $project->setArchived(true);
+                $em->persist($project);
+                $em->flush();
+                return $this->redirectToRoute('project_index');
+            }
+        }
+        return $this->render('project/archive.html.twig', array(
+                    'project' => $project,
+                    'code' => $code,
+                    'form' => $form->createView()
         ));
     }
 

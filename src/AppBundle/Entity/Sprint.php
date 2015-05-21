@@ -7,8 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Sprint
  *
- * @ORM\Table()
- * @ORM\Entity(repositoryClass="AppBundle\Entity\SprintRepository")
+ * @ORM\Table(name="sprint")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\SprintRepository")
  */
 class Sprint
 {
@@ -31,14 +31,14 @@ class Sprint
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_start", type="datetime")
+     * @ORM\Column(name="date_start", type="date")
      */
     private $dateStart;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_end", type="datetime")
+     * @ORM\Column(name="date_end", type="date")
      */
     private $dateEnd;
 

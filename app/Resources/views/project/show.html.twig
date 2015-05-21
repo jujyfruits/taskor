@@ -11,19 +11,72 @@
         {% endif %}
     {% endblock additional_navbar_pills %}
 
+{% block breadcrumps %}
+    <h3>{{ project.Name }}</h3>
+{% endblock %}
+
 {% block content %}
 
     <div class="row">
-        <div class="col-xs-12">
-            <h3>{{ project.Name }}</h3>
+        <div class="col-md-6">
+            <div class="task-group-container">
+                <span class="task-group-header">Все задачи</span>
+                {% for task in all_tasks %}
+                    <div class="task-container {% if task.state  == 'Done'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">
+                                    {{ task.name }}
+                                </a>
+                            </div>
+                            <div class="col-xs-4">
+                                {{ task.createdAt |date("d/m/Y H:i") }}
+                            </div>
+                            <div class="col-xs-12">
+                                {{ task.estimatedtime }} hours 
+                            </div>
+                            <div class="col-xs-12">
+                                {{ task.description }}
+                            </div>
+
+                            <div class="col-xs-12">
+                                {% if task.getChildren().count %}
+                                    <span class="glyphicon glyphicon-tasks"></span>
+                                    <span>{{task.getChildren().count}} </span>
+                                    {% if ((task.getChildren().count % 10 == 1) and (task.getChildren().count % 100 != 11)) %}
+                                        подзадача
+                                    {% elseif (((task.getChildren().count % 10 >= 2) and (task.getChildren().count % 10 <= 4) and ((task.getChildren().count % 100 < 10) or (task.getChildren().count % 100 >= 20))))%}
+                                        подзадачи
+                                    {% else %}
+                                        подзадач
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <div class="col-xs-12">
+                                <div class="pull-right">
+                                    {% if task.state  == 'Started'%}
+                                        <button type="button" class="button alert-button">Отказаться</button>
+                                        <button type="button" class="button finish-button">Закончить</button>
+                                    {% elseif task.state == 'Unstarted' %}
+                                        <button type="button" class="button success-button">Начать</button>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
 
-        <div class="col-xs-12">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="task-group-container">
-                        <span class="task-group-header">Все задачи</span>
-                        {% for task in all_tasks %}
+        <div class="col-md-6">
+            <div class="task-group-container">
+                <span class="task-group-header">Бэклог</span>
+                {% for sprint in sprints %}
+                    <div class="task-sprint-container">
+                        <span class="task-group-header">{{ sprint.getDateStart()|localizeddate('long', 'none', null, null, 'd MMMM') }} &mdash; {{ sprint.getDateEnd()|localizeddate('long', 'none', null, null, 'd MMMM') }}</span> 
+                        {% for task in sprint.getTask() %}
                             <div class="task-container {% if task.state  == 'Done'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
                                 <div class="row">
                                     <div class="col-xs-8">
@@ -40,6 +93,21 @@
                                     <div class="col-xs-12">
                                         {{ task.description }}
                                     </div>
+
+                                    <div class="col-xs-12">
+                                        {% if task.getChildren().count %}
+                                            <span class="glyphicon glyphicon-tasks"></span>
+                                            <span>{{task.getChildren().count}} </span>
+                                            {% if ((task.getChildren().count % 10 == 1) and (task.getChildren().count % 100 != 11)) %}
+                                                подзадача
+                                            {% elseif (((task.getChildren().count % 10 >= 2) and (task.getChildren().count % 10 <= 4) and ((task.getChildren().count % 100 < 10) or (task.getChildren().count % 100 >= 20))))%}
+                                                подзадачи
+                                            {% else %}
+                                                подзадач
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+
                                     <div class="col-xs-12">
                                         <div class="pull-right">
                                             {% if task.state  == 'Started'%}
@@ -55,9 +123,10 @@
                             </div>
                         {% endfor %}
                     </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
+
     </div>
 
 {% endblock content %}

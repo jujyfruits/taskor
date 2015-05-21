@@ -4,11 +4,13 @@
     Inviting to a project
 {% endblock %}
 
+{% block breadcrumps %}
+    <h4>Добавление участников в проект <strong>{{ project.Name }}</strong></h4>
+{% endblock %}
+
 {% block content %}
 
     <div>
-        <h3>Inviting to <strong>{{ project.Name }}</strong></h3>
-
         <div class="well">
             <h3>{{ project.Name }}</h3>
             {{ project.CreatedAt|date("jS F Y \\a\\t H:i") }}
@@ -21,7 +23,7 @@
 
         {{ form_widget(form) }}
 
-        <input type="submit" class="simple-button" value="Create new" />
+        <input type="submit" class="simple-button" value="Сохранить изменения" />
     </form>
 
 {% endblock %}

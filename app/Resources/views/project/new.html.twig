@@ -4,13 +4,16 @@
     Creating new project
 {% endblock %}
 
+{% block breadcrumps %}
+    <h3>Создание нового проекта</h3>
+{% endblock %}
+
 {% block content %}
-    
-    <form action="{{ path("project_create") }}" method="post">
-
-        {{ form_widget(form) }}
-
-        <input type="submit" class="simple-button" value="Create new" />
-    </form>
-
+    <div class="row">
+        <div class="col-xs-6">
+            <form action="{{ path("project_create") }}" method="post">
+                {{ form_widget(form) }}
+            </form>
+        </div>
+    </div>
 {% endblock %}

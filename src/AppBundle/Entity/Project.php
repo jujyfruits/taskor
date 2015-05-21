@@ -28,6 +28,16 @@ class Project {
     protected $description;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $archived;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $sprint_length;
+
+    /**
      * @ORM\Column(type="datetime", length=50)
      */
     protected $created_at;
@@ -226,5 +236,51 @@ class Project {
     public function getSprint()
     {
         return $this->sprint;
+    }
+
+    /**
+     * Set archived
+     *
+     * @param boolean $archived
+     * @return Project
+     */
+    public function setArchived($archived)
+    {
+        $this->archived = $archived;
+
+        return $this;
+    }
+
+    /**
+     * Get archived
+     *
+     * @return boolean 
+     */
+    public function getArchived()
+    {
+        return $this->archived;
+    }
+
+    /**
+     * Set sprint_length
+     *
+     * @param integer $sprintLength
+     * @return Project
+     */
+    public function setSprintLength($sprintLength)
+    {
+        $this->sprint_length = $sprintLength;
+
+        return $this;
+    }
+
+    /**
+     * Get sprint_length
+     *
+     * @return integer 
+     */
+    public function getSprintLength()
+    {
+        return $this->sprint_length;
     }
 }

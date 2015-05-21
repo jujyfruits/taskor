@@ -28,6 +28,16 @@ class Project {
     protected $description;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $archived;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $sprint_length;
+
+    /**
      * @ORM\Column(type="datetime", length=50)
      */
     protected $created_at;
@@ -125,7 +135,7 @@ class Project {
      * @return \DateTime
      */
     public function getCreatedAt() {
-        return $this->created_at->format('Y-m-d H:i:s');
+        return $this->created_at;
     }
 
 
@@ -193,5 +203,38 @@ class Project {
     public function getTask()
     {
         return $this->task;
+    }
+
+    /**
+     * Add sprint
+     *
+     * @param \AppBundle\Entity\Sprint $sprint
+     * @return Project
+     */
+    public function addSprint(\AppBundle\Entity\Sprint $sprint)
+    {
+        $this->sprint[] = $sprint;
+
+        return $this;
+    }
+
+    /**
+     * Remove sprint
+     *
+     * @param \AppBundle\Entity\Sprint $sprint
+     */
+    public function removeSprint(\AppBundle\Entity\Sprint $sprint)
+    {
+        $this->sprint->removeElement($sprint);
+    }
+
+    /**
+     * Get sprint
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSprint()
+    {
+        return $this->sprint;
     }
 }

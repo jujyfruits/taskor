@@ -1,0 +1,41 @@
+
+<div id="{{ task.Id }}-task-container" class="task-container {% if task.state  == 'Finished'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
+    <div class="row">
+        <div class="col-xs-10">
+            <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">
+                {{ task.name }}
+            </a>
+        </div>
+        <div class="col-xs-2">
+            {{ task.estimatedtime }}ч
+        </div>
+        <div class="col-xs-12">
+            {{ task.description }}
+        </div>
+        <div class="col-xs-12">
+            {% if task.getChildren().count %}
+                <span class="glyphicon glyphicon-tasks"></span>
+                <span>{{task.getChildren().count}} </span>
+                {% if ((task.getChildren().count % 10 == 1) and (task.getChildren().count % 100 != 11)) %}
+                    подзадача
+                {% elseif (((task.getChildren().count % 10 >= 2) and (task.getChildren().count % 10 <= 4) and ((task.getChildren().count % 100 < 10) or (task.getChildren().count % 100 >= 20))))%}
+                    подзадачи
+                {% else %}
+                    подзадач
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="col-xs-12">
+            <div class="pull-right">
+                <input id type="hidden" value="{{ task.name }}">
+                {% if task.state  == 'Started'%}
+                    <button data-id="{{ task.Id }}" type="button" value="deny" class="button-change-state button alert-button">Отказаться</button>
+                    <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>
+                {% elseif task.state == 'Unstarted' %}
+                    <button data-id="{{ task.Id }}" type="button" value="start" class="button-change-state button success-button">Начать</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

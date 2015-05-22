@@ -7,9 +7,88 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Project;
 use AppBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\ProjectType;
 
 class ProjectController extends Controller {
+
+    /**
+     * @Route("/project/task/ajaxchangestate/",
+     *  name="ajax_change_task_state")
+     */
+    public function ajaxChangeTaskStateAction(Request $request) {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            throw $this->createNotFoundException();
+        }
+        $project_id = $request->get('project_id');
+        $task_id = $request->get('task_id');
+        $new_state = $request->get('new_state');
+        $estimated_time = $request->get('estimated_time');
+        $spended_time = $request->get('spended_time');
+        if (empty($project_id) || empty($task_id) || empty($new_state))
+            return;
+        $em = $this->getDoctrine()->getEntityManager();
+        $task = $em->getRepository('AppBundle:Task')->getProjectTaskById($project_id, $task_id);
+
+        $project = $em->getRepository('AppBundle:Task')->findOneBy(array('id' => $project_id));
+        if (empty($task))
+            return;
+        $task->setEstimatedTime($estimated_time);
+        $task->setSpendedTime($spended_time);
+       
+        if ($new_state == 'start') {
+            $task->setState('Started');
+            $task->setUser($this->container->get('security.context')->getToken()->getUser());
+        } elseif ($new_state == 'finish') {
+            $task->setState('Finished');
+        } elseif ($new_state == 'deny') {
+            $task->setState('Unstarted');
+            $task->setUser(null);
+        } else {
+            return;
+        }
+        $em->persist($task);
+        $em->flush();
+        $response = new Response();
+        $view = $this->renderView('project/tasks/task_list.html.twig', array('task' => $task, 'project' => $project));
+        $response = new Response($view);
+        return $response;
+    }
+
+    /**
+     * @Route("/project/task/ajaxchangestate/dialog",
+     *  name="ajax_change_task_state_dialog")
+     */
+    public function ajaxChangeTaskStateDialogAction(Request $request) {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            throw $this->createNotFoundException();
+        }
+        $project_id = $request->get('project_id');
+        $task_id = $request->get('task_id');
+        $new_state = $request->get('new_state');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $task = $em->getRepository('AppBundle:Task')->getProjectTaskById($project_id, $task_id);
+        if (empty($task))
+            return;
+        $form = $this->createFormBuilder($task)
+                ->add('estimated_time', 'integer', array(
+                    'label' => 'Предполагаемое время выполнения',
+                    'disabled' => (($new_state == 'finish')||($new_state == 'deny'))
+                ))
+                ->add('spended_time', 'integer', array(
+                    'label' => 'Итоговое время выполнения',
+                    'disabled' => (($new_state == 'start')||($new_state == 'deny'))
+                ))
+                ->getForm();
+        $response = new Response();
+        $view = $this->renderView('project/tasks/task_state_dialog.html.twig', array(
+            'task' => $task,
+            'form' => $form->createView()
+        ));
+        $response = new Response($view);
+        return $response;
+    }
 
     /**
      * @Route("/", name="project_index")
@@ -96,17 +175,13 @@ class ProjectController extends Controller {
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
-
         $sprints = $project->getSprint();
-        foreach ($sprints as $sprint) {
-            $sprint->getTask();
-        }
 
+        // неназначенные и просроченные 
         $all_tasks = $project->getTask();
-        //$all_tasks = $em->getRepository('AppBundle:Task')->findAll()ж
+
         return $this->render('project/show.html.twig', array(
                     'project' => $project,
-                    'id' => $id,
                     'all_tasks' => $all_tasks,
                     'sprints' => $sprints
         ));

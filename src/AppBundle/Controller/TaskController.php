@@ -15,13 +15,6 @@ use AppBundle\Form\Type\TaskType;
 class TaskController extends Controller {
 
     /**
-     * @Route("/project/task/new/ajaxform", name="ajax_add_task_form")
-     */
-    public function addFormAction() {
-        return new Response();
-    }
-
-    /**
      * @Route("/project/{project_id}/task/{task_id}", name="task_show")
      */
     public function showAction($project_id, $task_id) {
@@ -43,12 +36,33 @@ class TaskController extends Controller {
                 array_push($task_parents, $parent);
             }
         }
+
+        $user = $this->container->get('security.context')->getToken()->getUser();
+
+        /*
+          $task->setUser($user);
+          $user->addTask($task);
+          $em->persist($task);
+          $em->persist($user);
+          $em->flush();
+         */
+        $username = ($task->getUser()) ? $task->getUser()->getUsername() : null;
+
+        $start_date = $task->getSprint()->getDateStart();
+        $end_date = $task->getSprint()->getDateEnd();
+        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
+        $formatter->setPattern('d MMMM Y');
+        $sprint = $formatter->format($start_date) . ' — ' . $formatter->format($end_date);
+
+
         return $this->render('task/show.html.twig', array(
                     'project' => $project,
                     'project_id' => $project_id,
                     'task' => $task,
                     'child_tasks' => $task->getChildren(),
-                    'task_parents' => $task_parents
+                    'task_parents' => $task_parents,
+                    'username' => $username,
+                    'sprint' => $sprint,
         ));
     }
 
@@ -92,12 +106,8 @@ class TaskController extends Controller {
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
             if ($form->isValid()) {
-
                 $sprint_number = $form['sprint']->getData();
-                /* удалить дубли */
-                $sprint = $em->getRepository('AppBundle:Project')->getSprintByNumber($project_id, $sprint_number);
-                $sprint = $sprint[0];
-                
+                $sprint = $em->getRepository('AppBundle:Sprint')->getProjectSprintByNumber($project_id, $sprint_number);
                 if (empty($sprint)) {
                     $sprint = new Sprint();
                     $sprint->setProject($project);

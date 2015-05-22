@@ -28,9 +28,40 @@
 {% block content %}
 
     <div>
-        <h3>{{ task.Name }}</h3>
-        {{  task.Description }}
-        {{ task.EstimatedTime }}
+        <table class="full-task-view">
+            <tr>
+                <td>Название:</td>
+                <td>{{  task.Name }}</td>
+            </tr>
+            <tr>
+                <td>Дата создания:</td>
+                <td>{{  task.CreatedAt | localizeddate('long', 'none', 'd MMMM') }}</td>
+            </tr>
+            <tr>
+                <td>Участник:</td>
+                <td>{{  username }}</td>
+            </tr>
+            <tr>
+                <td>Описание:</td>
+                <td>{{  task.Description }}</td>
+            </tr>
+            <tr>
+                <td>Текущее состояние:</td>
+                <td>{{  task.State }}</td>
+            </tr>
+            <tr>
+                <td>Установленный спринт:</td>
+                <td>{{  sprint }}</td>
+            </tr>
+            <tr>
+                <td>Предполагаемое время выполнения:</td>
+                <td>{{  task.EstimatedTime }}</td>
+            </tr>
+            <tr>
+                <td>Итоговое время выполнения:</td>
+                <td>{{  task.SpendedTime }}</td>
+            </tr>
+        </table>
     </div>
 
     <ul class="list-group">

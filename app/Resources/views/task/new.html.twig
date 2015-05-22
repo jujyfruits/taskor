@@ -5,33 +5,19 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Новая задача в проекте <strong>{{ project.Name }}</strong></h3>
-    
+    <h3>Новая задача в проекте 
+        <a href="{{ path('project_show',{'id':project.id}) }}">
+            <strong>{{ project.Name }}</strong>
+        </a>
+    </h3>
+
     <div class="row">
         <div class="col-md-6">
             <form action="{{ path("task_create",{'project_id':project.id}) }}" method="post">
 
                 {{ form_widget(form) }}
-                
-            </form>
-            <script>
-                function addButtonPressed() {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ path('ajax_add_task_form') }}",
-                        cache: false,
-                        success: function () {
-                            console.log('ajax responsed');
-                        }
-                    });
-                }
 
-                $(document).ready(function () {
-                    $('button').on('click', function () {
-                        addButtonPressed();
-                    });
-                });
-            </script>
+            </form>
         </div>
     </div>
 {% endblock %}

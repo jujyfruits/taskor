@@ -13,6 +13,9 @@
         {% javascripts '@AppBundle/Resources/public/js/jquery-1.11.3.min.js' %}
         <script type="text/javascript" src="{{ asset_url }}"></script>
         {% endjavascripts %}
+        {% javascripts '@AppBundle/Resources/public/js/bootstrap.min.js' %}
+        <script type="text/javascript" src="{{ asset_url }}"></script>
+        {% endjavascripts %}
 
         <title>{% block title %} Task Tracker {% endblock title %}</title>
     {% endblock head %}

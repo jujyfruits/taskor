@@ -28,7 +28,8 @@
                         {% endif %}
                         <p>{{ project.Description }}</p>
 
-                    </div>{% else %}
+                    </div>
+                {% else %}
                     Здесь будут отображаться ваши проекты.
                 {% endfor %}
             </div>
@@ -51,9 +52,9 @@
                                     <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
                                     <p>{{ project.Description }}</p>
                                 </div>
+                            {% else %}
+                                Здесь будут отображаться все проекты.
                             </div>
-                        {% else %}
-                            Здесь будут отображаться все проекты.
                         {% endfor %}
                     </div>
                 </div>

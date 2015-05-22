@@ -1,0 +1,22 @@
+<div class="modal fade custom-modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">{{ task.Name }}</h4>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    {{ form_widget(form) }}
+
+                    {% if task.state  == 'Started'%}
+                        <button data-id="{{ task.Id }}" type="submit" value="deny" class="modal-button-change-state button alert-button">Отказаться</button>
+                        <button data-id="{{ task.Id }}" type="submit" value="finish" class="modal-button-change-state button finish-button">Закончить</button>
+                    {% elseif task.state == 'Unstarted' %}
+                        <button data-id="{{ task.Id }}" type="submit" value="start" class="modal-button-change-state button success-button">Начать</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

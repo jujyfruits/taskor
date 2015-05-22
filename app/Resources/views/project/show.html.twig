@@ -6,8 +6,8 @@
 
 {% block additional_navbar_pills %}
     {% if is_granted('ROLE_MANAGER') %}
-        <li><a href="{{ path('task_create',{'project_id':id}) }}">Создать новую задачу</a></li>
-        <li><a href="/project/{{ id }}/invite">Добавить участников</a></li>
+        <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
+        <li><a href="{{ path('invite_to_project',{'id':project.id}) }}">Добавить участников</a></li>
         {% endif %}
     {% endblock additional_navbar_pills %}
 
@@ -18,7 +18,8 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-6">
+        {#
+        <div class="col-md-4">
             <div class="task-group-container">
                 <span class="task-group-header">Все задачи</span>
                 {% for task in all_tasks %}
@@ -70,63 +71,92 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        #}
+
+
+
+        <div class="col-md-4">
             <div class="task-group-container">
                 <span class="task-group-header">Бэклог</span>
                 {% for sprint in sprints %}
                     <div class="task-sprint-container">
                         <span class="task-group-header">{{ sprint.getDateStart()|localizeddate('long', 'none', null, null, 'd MMMM') }} &mdash; {{ sprint.getDateEnd()|localizeddate('long', 'none', null, null, 'd MMMM') }}</span> 
                         {% for task in sprint.getTask() %}
-                            <div class="task-container {% if task.state  == 'Done'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
-                                <div class="row">
-                                    <div class="col-xs-8">
-                                        <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">
-                                            {{ task.name }}
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-4">
-                                        {{ task.createdAt |date("d/m/Y H:i") }}
-                                    </div>
-                                    <div class="col-xs-12">
-                                        {{ task.estimatedtime }} hours 
-                                    </div>
-                                    <div class="col-xs-12">
-                                        {{ task.description }}
-                                    </div>
-
-                                    <div class="col-xs-12">
-                                        {% if task.getChildren().count %}
-                                            <span class="glyphicon glyphicon-tasks"></span>
-                                            <span>{{task.getChildren().count}} </span>
-                                            {% if ((task.getChildren().count % 10 == 1) and (task.getChildren().count % 100 != 11)) %}
-                                                подзадача
-                                            {% elseif (((task.getChildren().count % 10 >= 2) and (task.getChildren().count % 10 <= 4) and ((task.getChildren().count % 100 < 10) or (task.getChildren().count % 100 >= 20))))%}
-                                                подзадачи
-                                            {% else %}
-                                                подзадач
-                                            {% endif %}
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="col-xs-12">
-                                        <div class="pull-right">
-                                            {% if task.state  == 'Started'%}
-                                                <button type="button" class="button alert-button">Отказаться</button>
-                                                <button type="button" class="button finish-button">Закончить</button>
-                                            {% elseif task.state == 'Unstarted' %}
-                                                <button type="button" class="button success-button">Начать</button>
-                                            {% endif %}
-
-                                        </div>
-                                    </div>
-                                </div>
+                            {{ include('project/tasks/task_list.html.twig', { 'task': task }) }}
+                        {% else %}
+                            <div class="no-tasks-container text-center text-muted">
+                                Нет доступных спринтов
                             </div>
                         {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-sprints-container text-center text-muted">
+                        Нет доступных спринтов
                     </div>
                 {% endfor %}
             </div>
         </div>
+    </div>
+
+    <div class="modal fade custom-modal" id="myModal">
 
     </div>
+
+    <script>
+        function buttonChangeStatePressed(new_state, task_id) {
+        }
+
+        function buttonChangeStateDialogPressed(new_state, task_id) {
+        $.ajax({
+        type: "POST",
+                url: "{{ path('ajax_change_task_state_dialog') }}",
+                data: {
+                project_id:{{ project.id }},
+                        task_id: task_id,
+                        new_state : new_state
+                },
+                cache: false,
+                success: function (data) {
+                $('#myModal').replaceWith(data);
+                        $('#myModal').modal('show');
+                }
+        });
+        }
+
+
+        $(document).ready(function () {
+            $(document).on("click", '.button-change-state', function () {
+            var new_state = $(this).attr("value");
+                    var task_id = $(this).attr("data-id");
+                    buttonChangeStateDialogPressed(new_state, task_id);
+            });
+        });
+        
+        $(document).ready(function () {
+            $(document).on("click", '.modal-button-change-state', function () {
+                    var new_state = $(this).attr("value");
+                    var task_id = $(this).attr("data-id");
+                    var estimated_time = $('#form_estimated_time').val();
+                    var spended_time = $('#form_spended_time').val();
+                    $.ajax({
+                    type: "POST",
+                            url: "{{ path('ajax_change_task_state') }}",
+                            data: {
+                            project_id:{{ project.id }},
+                                    task_id: task_id,
+                                    new_state : new_state,
+                                    estimated_time : estimated_time,
+                                    spended_time : spended_time
+                            },
+                            cache: false,
+                            success: function (data) {
+                            $('#myModal').modal('hide');
+                                    $('#' + task_id + '-task-container').replaceWith(data);
+                            }
+                    });
+            });
+        });
+
+    </script>
 
 {% endblock content %}

@@ -103,58 +103,57 @@
     </div>
 
     <script>
-        function buttonChangeStatePressed(new_state, task_id) {
-        }
-
-        function buttonChangeStateDialogPressed(new_state, task_id) {
-        $.ajax({
-        type: "POST",
-                url: "{{ path('ajax_change_task_state_dialog') }}",
-                data: {
-                project_id:{{ project.id }},
-                        task_id: task_id,
-                        new_state : new_state
-                },
-                cache: false,
-                success: function (data) {
-                $('#myModal').replaceWith(data);
-                        $('#myModal').modal('show');
-                }
-        });
-        }
 
 
         $(document).ready(function () {
-            $(document).on("click", '.button-change-state', function () {
+        // Modal form handler
+        $(document).on("click", '.modal-button-change-state', function () {
             var new_state = $(this).attr("value");
-                    var task_id = $(this).attr("data-id");
-                    buttonChangeStateDialogPressed(new_state, task_id);
+            var task_id = $(this).attr("data-id");
+                $('form').on('submit', [new_state, task_id], function (e) {
+                    e.preventDefault();
+                        if ($(this).valid()) {
+                        var estimated_time = $('#form_estimated_time').val();
+                        var spended_time = $('#form_spended_time').val();
+                        $.ajax({
+                        type: "POST",
+                                url: "{{ path('ajax_change_task_state') }}",
+                                data: {
+                                project_id:{{ project.id }},
+                                        task_id: task_id,
+                                        new_state : new_state,
+                                        estimated_time : estimated_time,
+                                        spended_time : spended_time
+                                },
+                                cache: false,
+                                success: function (data) {
+                                $('#myModal').modal('hide');
+                                        $('#' + task_id + '-task-container').replaceWith(data);
+                                }
+                        });
+                        }
+                });
+        });
+        // Task button handler
+        $(document).on("click", '.button-change-state', function () {
+            var new_state = $(this).attr("value");
+            var task_id = $(this).attr("data-id");
+            $.ajax({
+            type: "POST",
+                    url: "{{ path('ajax_change_task_state_dialog') }}",
+                    data: {
+                    project_id:{{ project.id }},
+                            task_id: task_id,
+                            new_state : new_state
+                    },
+                    cache: false,
+                    success: function (data) {
+                    $('#myModal').replaceWith(data);
+                            $('#myModal').modal('show');
+                    }
             });
         });
         
-        $(document).ready(function () {
-            $(document).on("click", '.modal-button-change-state', function () {
-                    var new_state = $(this).attr("value");
-                    var task_id = $(this).attr("data-id");
-                    var estimated_time = $('#form_estimated_time').val();
-                    var spended_time = $('#form_spended_time').val();
-                    $.ajax({
-                    type: "POST",
-                            url: "{{ path('ajax_change_task_state') }}",
-                            data: {
-                            project_id:{{ project.id }},
-                                    task_id: task_id,
-                                    new_state : new_state,
-                                    estimated_time : estimated_time,
-                                    spended_time : spended_time
-                            },
-                            cache: false,
-                            success: function (data) {
-                            $('#myModal').modal('hide');
-                                    $('#' + task_id + '-task-container').replaceWith(data);
-                            }
-                    });
-            });
         });
 
     </script>

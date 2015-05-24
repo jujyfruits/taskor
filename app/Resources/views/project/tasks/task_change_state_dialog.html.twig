@@ -8,13 +8,16 @@
             <div class="modal-body">
                 <form method="post">
                     {{ form_widget(form) }}
-
                     {% if task.state  == 'Started'%}
-                        <button data-id="{{ task.Id }}" type="submit" value="deny" class="modal-button-change-state button alert-button">Отказаться</button>
-                        <button data-id="{{ task.Id }}" type="submit" value="finish" class="modal-button-change-state button finish-button">Закончить</button>
+                        {% if  new_state   == 'deny'%}
+                            <button data-id="{{ task.Id }}" type="submit" value="deny" class="modal-button-change-state button alert-button">Отказаться</button>
+                        {% else %}
+                            <button data-id="{{ task.Id }}" type="submit" value="finish" class="modal-button-change-state button finish-button">Закончить</button>
+                        {% endif %}
                     {% elseif task.state == 'Unstarted' %}
                         <button data-id="{{ task.Id }}" type="submit" value="start" class="modal-button-change-state button success-button">Начать</button>
                     {% endif %}
+                    <button type="button" class="simple-button" data-dismiss="modal" aria-label="Close">Закрыть</button>
                 </form>
             </div>
         </div>

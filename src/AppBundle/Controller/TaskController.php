@@ -15,6 +15,97 @@ use AppBundle\Form\Type\TaskType;
 class TaskController extends Controller {
 
     /**
+     * @Route("/project/task/ajaxchangestate/",
+     *  name="ajax_change_task_state")
+     */
+    public function ajaxChangeTaskStateAction(Request $request) {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            throw $this->createNotFoundException();
+        }
+
+        $project_id = $request->get('project_id');
+        $task_id = $request->get('task_id');
+        $new_state = $request->get('new_state');
+        $estimated_time = ($new_state == 'deny') ? null : $request->get('estimated_time');
+        $spended_time = (($new_state == 'deny') || ($new_state == 'start')) ? null : $request->get('spended_time');
+        $view_template = $request->get('view');
+
+        if (empty($project_id) || empty($task_id) || empty($new_state))
+            return;
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $task = $em->getRepository('AppBundle:Task')->getProjectTaskById($project_id, $task_id);
+
+        $project = $em->getRepository('AppBundle:Task')->findOneBy(array('id' => $project_id));
+        if (empty($task))
+            return;
+
+        $task->setEstimatedTime($estimated_time);
+        $task->setSpendedTime($spended_time);
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        if ($new_state == 'start') {
+            $task->setState('Started');
+            $task->setUser($user);
+        } elseif ($new_state == 'finish') {
+            $task->setState('Finished');
+        } elseif ($new_state == 'deny') {
+            $task->setState('Unstarted');
+            $task->setUser(null);
+        } else {
+            return;
+        }
+        $em->persist($task);
+        $em->flush();
+
+        if ($view_template == 'list') {
+            $view = $this->renderView('project/tasks/task_list.html.twig', array('task' => $task, 'project' => $project, 'user' => $user->getUsername()));
+        } else {
+            $view = $this->renderView('task/task_full.html.twig', array('task' => $task, 'sprint' => $task->getSprint() ? : 'Неназначено'));
+        }
+        $response = new Response($view);
+        return $response;
+    }
+
+    /**
+     * @Route("/project/task/ajaxchangestate/dialog",
+     *  name="ajax_change_task_state_dialog")
+     */
+    public function ajaxDialogChangeTaskStateAction(Request $request) {
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            throw $this->createNotFoundException();
+        }
+        $project_id = $request->get('project_id');
+        $task_id = $request->get('task_id');
+        $new_state = $request->get('new_state');
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $task = $em->getRepository('AppBundle:Task')->getProjectTaskById($project_id, $task_id);
+        if (empty($task))
+            return;
+        $form = $this->createFormBuilder($task)
+                ->add('estimated_time', 'integer', array(
+                    'label' => 'Предполагаемое время выполнения',
+                    'disabled' => (($new_state == 'finish') || ($new_state == 'deny')),
+                    'data' => ($task->getEstimatedTime()) ? $task->getEstimatedTime() : null,
+                    'attr' => array('min' => 1)
+                ))
+                ->add('spended_time', 'integer', array(
+                    'label' => 'Итоговое время выполнения',
+                    'disabled' => (($new_state == 'start') || ($new_state == 'deny')),
+                    'data' => ($task->getSpendedTime()) ? $task->getSpendedTime() : null,
+                    'attr' => array('min' => 1)
+                ))
+                ->getForm();
+        $view = $this->renderView('project/tasks/task_change_state_dialog.html.twig', array(
+            'task' => $task,
+            'new_state' => $new_state,
+            'form' => $form->createView()
+        ));
+        $response = new Response($view);
+        return $response;
+    }
+
+    /**
      * @Route("/project/{project_id}/task/{task_id}", name="task_show")
      */
     public function showAction($project_id, $task_id) {
@@ -39,30 +130,13 @@ class TaskController extends Controller {
 
         $user = $this->container->get('security.context')->getToken()->getUser();
 
-        /*
-          $task->setUser($user);
-          $user->addTask($task);
-          $em->persist($task);
-          $em->persist($user);
-          $em->flush();
-         */
-        $username = ($task->getUser()) ? $task->getUser()->getUsername() : null;
-
-        $start_date = $task->getSprint()->getDateStart();
-        $end_date = $task->getSprint()->getDateEnd();
-        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
-        $formatter->setPattern('d MMMM Y');
-        $sprint = $formatter->format($start_date) . ' — ' . $formatter->format($end_date);
-
-
         return $this->render('task/show.html.twig', array(
                     'project' => $project,
                     'project_id' => $project_id,
                     'task' => $task,
                     'child_tasks' => $task->getChildren(),
                     'task_parents' => $task_parents,
-                    'username' => $username,
-                    'sprint' => $sprint,
+                    'sprint' => $task->getSprint() ? : 'Неназначено'
         ));
     }
 
@@ -84,43 +158,29 @@ class TaskController extends Controller {
         $all_tasks = $project->getTask();
         $task = new Task();
 
-        $interval = date_diff((new \DateTime()), $project->getCreatedAt())->days;
-        $current_sprint = (int) ceil($interval / $project->getSprintLength());
-        $sprints_numbers = array();
-        $sprints_dates = array();
-        $sprints_dates_text = array();
-        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
-        $formatter->setPattern('d MMMM Y');
-        for ($i = 0; $i < 6; $i++) {
-            $sprints_numbers[$i] = $current_sprint + $i;
-            $start_date = clone $project->getCreatedAt();
-            $start_date->add(date_interval_create_from_date_string(( $project->getSprintLength() * ($current_sprint + $i - 1)) . ' days'));
-            $end_date = clone $start_date;
-            $end_date->add(date_interval_create_from_date_string($project->getSprintLength() - 1 . 'days'));
-            $sprints_dates[$i] = ['start_date' => $start_date, 'end_date' => $end_date];
-            $sprints_dates_text[$i] = $formatter->format($start_date) . ' — ' . $formatter->format($end_date);
-        }
+        list($sprints_numbers, $sprints_dates, $sprints_dates_text, $current_sprint) = $this->generateSprintsForTask($project);
 
         $form = $this->createForm(new TaskType($parent_task, $all_tasks, $sprints_numbers, $sprints_dates_text), $task);
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
             if ($form->isValid()) {
-                $sprint_number = $form['sprint']->getData();
-                $sprint = $em->getRepository('AppBundle:Sprint')->getProjectSprintByNumber($project_id, $sprint_number);
-                if (empty($sprint)) {
-                    $sprint = new Sprint();
-                    $sprint->setProject($project);
-                    $sprint->setNumber($sprint_number);
-                    $sprint->setDateStart($sprints_dates[$sprint_number - $current_sprint]['start_date']);
-                    $sprint->setDateEnd($sprints_dates[$sprint_number - $current_sprint]['end_date']);
+                if ($sprint_number = $form['sprint']->getData()) {
+                    $sprint = $em->getRepository('AppBundle:Sprint')->getProjectSprintByNumber($project_id, $sprint_number);
+                    if (empty($sprint)) {
+                        $sprint = new Sprint();
+                        $sprint->setProject($project)
+                                ->setNumber($sprint_number)
+                                ->setDateStart($sprints_dates[$sprint_number - $current_sprint]['start_date'])
+                                ->setDateEnd($sprints_dates[$sprint_number - $current_sprint]['end_date']);
+                        $task->setSprint($sprint);
+                        $em->persist($sprint);
+                    }
                 }
                 $task->setCreatedAt(new \DateTime());
                 $task->setProject($project);
-                $task->setSprint($sprint);
                 $task->setState('Unstarted');
                 $em->persist($task);
-                $em->persist($sprint);
                 $em->flush();
                 $task_id = $task->getId();
                 if ($form->get('saveAndAdd')->isClicked()) {
@@ -138,6 +198,38 @@ class TaskController extends Controller {
                     'form' => $form->createView(),
                     'project' => $project,
                     'users' => $project->getuser()));
+    }
+
+    public function getTaskSprint($task) {
+        $sprint = $task->getSprint();
+        if (!$sprint) {
+            return false;
+        }
+        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
+        $formatter->setPattern('d MMMM Y');
+        return $formatter->format($sprint->getStartDate()) . ' — ' . $formatter->format($sprint->getEndDate());
+    }
+
+    public function generateSprintsForTask($project) {
+        $sprints_numbers = array();
+        $sprints_dates = array();
+        $sprints_dates_text = array();
+
+        $interval = date_diff((new \DateTime()), $project->getCreatedAt())->days;
+        $current_sprint = (int) ceil($interval / $project->getSprintLength());
+
+        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
+        $formatter->setPattern('d MMMM Y');
+        for ($i = 0; $i < 6; $i++) {
+            $sprints_numbers[$i] = $current_sprint + $i;
+            $start_date = clone $project->getCreatedAt();
+            $start_date->add(date_interval_create_from_date_string(( $project->getSprintLength() * ($current_sprint + $i - 1)) . ' days'));
+            $end_date = clone $start_date;
+            $end_date->add(date_interval_create_from_date_string($project->getSprintLength() - 1 . 'days'));
+            $sprints_dates[$i] = ['start_date' => $start_date, 'end_date' => $end_date];
+            $sprints_dates_text[$i] = $formatter->format($start_date) . ' — ' . $formatter->format($end_date);
+        }
+        return array($sprints_numbers, $sprints_dates, $sprints_dates_text, $current_sprint);
     }
 
 }

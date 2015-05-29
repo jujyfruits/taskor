@@ -1,41 +1,55 @@
-
 <div id="{{ task.Id }}-task-container" class="task-container {% if task.state  == 'Finished'%}done-task-container{% elseif task.state == 'Started' %}important-task-container{% else %}simple-task-container{% endif %}">
-    <div class="row">
-        <div class="col-xs-10">
-            <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">
+
+    {% if ((task.getChildren().count))%} <div class="parent-task"></div> {% endif %}
+    {% if task.getParent() %}  <div class="child-task"></div> {% endif %}
+    <div style="margin-left:5px;margin-right:-5px;" class="row">
+
+        <div class="col-xs-8">
+            {% if is_granted('ROLE_MANAGER') %}
+                <a href="{{ path('project_edit', {'id':1 }) }}" title="Редактировать задачу"><span class="glyphicon glyphicon-pencil edit-task-icon"></span></a>
+                {% endif %}
+            <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">                
                 {{ task.name }}
             </a>
         </div>
-        <div class="col-xs-2">
-            {{ task.estimatedtime }}ч
-        </div>
-        <div class="col-xs-12">
-            {{ task.description }}
-        </div>
-        <div class="col-xs-12">
-            {% if task.getChildren().count %}
-                <span class="glyphicon glyphicon-tasks"></span>
-                <span>{{task.getChildren().count}} </span>
-                {% if ((task.getChildren().count % 10 == 1) and (task.getChildren().count % 100 != 11)) %}
-                    подзадача
-                {% elseif (((task.getChildren().count % 10 >= 2) and (task.getChildren().count % 10 <= 4) and ((task.getChildren().count % 100 < 10) or (task.getChildren().count % 100 >= 20))))%}
-                    подзадачи
-                {% else %}
-                    подзадач
+        <div class="col-xs-4">
+            {% if (task.getUser) %}
+                <span style="display:inline;padding: 5px;" class="glyphicon glyphicon-user"></span><span>{{ task.getUser }}</span>
                 {% endif %}
+        </div>
+        <div class="clearfix "></div>
+        <div class="col-xs-5 task-subtask-link-container">
+            {% if task.getChildren().count %}
+                <a data-toggle="collapse" data-target=".{{task.Id}}-parent-task-child" id="{{task.Id}}-parent-task" class="parent-task-toggle-children">
+                    <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    {{task.getChildren().count}} 
+                    {{ task.getChildren().count|subtaskrus }}
+                </a>
             {% endif %}
         </div>
-
-        <div class="col-xs-12">
+        <div class="col-xs-7">
             <div class="pull-right">
                 <input id type="hidden" value="{{ task.name }}">
-                {% if task.state  == 'Started'%}
-                    <button data-id="{{ task.Id }}" type="button" value="deny" class="button-change-state button alert-button">Отказаться</button>
+{# удалить нахзуй кнопку  #}
+                {% if (task.getChildren().count) and (task |checkchildrenstate) %}
                     <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>
-                {% elseif task.state == 'Unstarted' %}
-                    <button data-id="{{ task.Id }}" type="button" value="start" class="button-change-state button success-button">Начать</button>
+                {% elseif not (task.getChildren().count) %}
+                    {% if task.state  == 'Started'  and task.getUser == user %}
+                        <button data-id="{{ task.Id }}" type="button" value="deny" class="button-change-state button alert-button">Отказаться</button>
+                        <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>
+                    {% elseif task.state == 'Unstarted' %}
+                        <button data-id="{{ task.Id }}" type="button" value="start" class="button-change-state button success-button">Начать</button>
+                    {% endif %}
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
+
+{% if task.getChildren().count %}
+    <div class="child-tasks-container {{ task.Id}}-parent-task-child collapse">
+        {% for child_task in task.getChildren() %}
+            {{ include('project/tasks/task_list.html.twig', { 'task': child_task }) }}
+        {% endfor %}
+    </div>
+{% endif %}

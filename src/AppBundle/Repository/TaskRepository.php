@@ -13,4 +13,21 @@ class TaskRepository extends EntityRepository {
                         ->getOneOrNullResult();
     }
 
+    public function getUnassignedTasksByProjectId($project_id) {
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb
+                ->select('Task', 'ChildTask')
+                ->from('AppBundle\Entity\Task', 'Task')
+                ->leftJoin('Task.children', 'ChildTask')
+                ->where('Task.sprint IS NULL')
+                ->andWhere('Task.project = :id')
+                ->setParameter('id', $project_id)
+        ;
+
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
 }

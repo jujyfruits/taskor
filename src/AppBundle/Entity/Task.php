@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TaskRepository")
  * @ORM\Table(name="task")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Task {
 
@@ -76,14 +77,12 @@ class Task {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-
     /**
      * Get id
      *
      * @return integer
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -93,8 +92,7 @@ class Task {
      * @param string $name
      * @return Task
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -105,8 +103,7 @@ class Task {
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -116,8 +113,7 @@ class Task {
      * @param string $description
      * @return Task
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
 
         return $this;
@@ -128,8 +124,7 @@ class Task {
      *
      * @return string
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
@@ -139,8 +134,7 @@ class Task {
      * @param string $state
      * @return Task
      */
-    public function setState($state)
-    {
+    public function setState($state) {
         $this->state = $state;
 
         return $this;
@@ -151,8 +145,7 @@ class Task {
      *
      * @return string
      */
-    public function getState()
-    {
+    public function getState() {
         return $this->state;
     }
 
@@ -162,8 +155,7 @@ class Task {
      * @param integer $estimatedTime
      * @return Task
      */
-    public function setEstimatedTime($estimatedTime)
-    {
+    public function setEstimatedTime($estimatedTime) {
         $this->estimated_time = $estimatedTime;
 
         return $this;
@@ -174,8 +166,7 @@ class Task {
      *
      * @return integer
      */
-    public function getEstimatedTime()
-    {
+    public function getEstimatedTime() {
         return $this->estimated_time;
     }
 
@@ -185,8 +176,7 @@ class Task {
      * @param integer $spendedTime
      * @return Task
      */
-    public function setSpendedTime($spendedTime)
-    {
+    public function setSpendedTime($spendedTime) {
         $this->spended_time = $spendedTime;
 
         return $this;
@@ -197,8 +187,7 @@ class Task {
      *
      * @return integer
      */
-    public function getSpendedTime()
-    {
+    public function getSpendedTime() {
         return $this->spended_time;
     }
 
@@ -208,8 +197,7 @@ class Task {
      * @param \DateTime $createdAt
      * @return Task
      */
-    public function setCreatedAt($createdAt)
-    {
+    public function setCreatedAt($createdAt) {
         $this->created_at = $createdAt;
 
         return $this;
@@ -220,8 +208,7 @@ class Task {
      *
      * @return \DateTime
      */
-    public function getCreatedAt()
-    {
+    public function getCreatedAt() {
         return $this->created_at;
     }
 
@@ -231,8 +218,7 @@ class Task {
      * @param \AppBundle\Entity\Task $children
      * @return Task
      */
-    public function addChild(\AppBundle\Entity\Task $children)
-    {
+    public function addChild(\AppBundle\Entity\Task $children) {
         $this->children[] = $children;
 
         return $this;
@@ -243,8 +229,7 @@ class Task {
      *
      * @param \AppBundle\Entity\Task $children
      */
-    public function removeChild(\AppBundle\Entity\Task $children)
-    {
+    public function removeChild(\AppBundle\Entity\Task $children) {
         $this->children->removeElement($children);
     }
 
@@ -253,8 +238,7 @@ class Task {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getChildren()
-    {
+    public function getChildren() {
         return $this->children;
     }
 
@@ -264,8 +248,7 @@ class Task {
      * @param \AppBundle\Entity\Task $parent
      * @return Task
      */
-    public function setParent(\AppBundle\Entity\Task $parent = null)
-    {
+    public function setParent(\AppBundle\Entity\Task $parent = null) {
         $this->parent = $parent;
 
         return $this;
@@ -276,8 +259,7 @@ class Task {
      *
      * @return \AppBundle\Entity\Task
      */
-    public function getParent()
-    {
+    public function getParent() {
         return $this->parent;
     }
 
@@ -287,8 +269,7 @@ class Task {
      * @param \AppBundle\Entity\Project $project
      * @return Task
      */
-    public function setProject(\AppBundle\Entity\Project $project = null)
-    {
+    public function setProject(\AppBundle\Entity\Project $project = null) {
         $this->project = $project;
 
         return $this;
@@ -299,8 +280,7 @@ class Task {
      *
      * @return \AppBundle\Entity\Project
      */
-    public function getProject()
-    {
+    public function getProject() {
         return $this->project;
     }
 
@@ -310,8 +290,7 @@ class Task {
      * @param \AppBundle\Entity\User $user
      * @return Task
      */
-    public function setUser(\AppBundle\Entity\User $user = null)
-    {
+    public function setUser(\AppBundle\Entity\User $user = null) {
         $this->user = $user;
 
         return $this;
@@ -322,8 +301,7 @@ class Task {
      *
      * @return \AppBundle\Entity\User
      */
-    public function getUser()
-    {
+    public function getUser() {
         return $this->user;
     }
 
@@ -333,8 +311,7 @@ class Task {
      * @param \AppBundle\Entity\Sprint $sprint
      * @return Task
      */
-    public function setSprint(\AppBundle\Entity\Sprint $sprint = null)
-    {
+    public function setSprint(\AppBundle\Entity\Sprint $sprint = null) {
         $this->sprint = $sprint;
 
         return $this;
@@ -345,8 +322,26 @@ class Task {
      *
      * @return \AppBundle\Entity\Sprint 
      */
-    public function getSprint()
-    {
+    public function getSprint() {
         return $this->sprint;
     }
+
+    /**
+     * @ORM\PreFlush
+     */
+    public function setParentState() {
+        
+        if (!$this->getParent() || $this->getState() != 'Finished') {
+            return null;
+        }
+        foreach ($this->getParent()->getChildren() as $anotherChild) {
+            if ($anotherChild->getState() != 'Finished') {
+                return null;
+            }
+        }
+        $this->getParent()->setState('Finished');
+        
+        
+    }
+
 }

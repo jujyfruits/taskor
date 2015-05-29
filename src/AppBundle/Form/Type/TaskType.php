@@ -14,12 +14,7 @@ class TaskType extends AbstractType {
     public function buildForm(FormBuilderInterface $builder, array $options) {
         $builder->add('name', 'text', array('label' => 'Название'));
         $builder->add('description', 'textarea', array('label' => 'Описание'));
-        $builder->add('sprint', 'choice', array(
-            'choice_list' => new ChoiceList($this->sprints_numbers, $this->sprints_dates_text),
-            'required' => true,
-            'mapped' => false,
-            'label' => 'Спринт'
-        ));
+
         if (!empty($this->parent_task)) {
             $builder->add('parent', 'entity', array(
                 'label' => 'Родительская задача',
@@ -36,6 +31,12 @@ class TaskType extends AbstractType {
                 'placeholder' => 'Выберите задачу',
                 'required' => false,
                 'empty_data' => null
+            ));
+            $builder->add('sprint', 'choice', array(
+                'choice_list' => new ChoiceList($this->sprints_numbers, $this->sprints_dates_text),
+                'required' => true,
+                'mapped' => false,
+                'label' => 'Спринт'
             ));
         }
 

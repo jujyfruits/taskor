@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="sprint")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\SprintRepository")
  */
-class Sprint
-{
+class Sprint {
+
     /**
      * @var integer
      *
@@ -52,9 +52,8 @@ class Sprint
      */
     private $task;
 
-    public function __construct()
-    {
-      $this->task = new \Doctrine\Common\Collections\ArrayCollection();
+    public function __construct() {
+        $this->task = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -62,8 +61,7 @@ class Sprint
      *
      * @return integer
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -73,8 +71,7 @@ class Sprint
      * @param integer $number
      * @return Sprint
      */
-    public function setNumber($number)
-    {
+    public function setNumber($number) {
         $this->number = $number;
 
         return $this;
@@ -85,8 +82,7 @@ class Sprint
      *
      * @return integer
      */
-    public function getNumber()
-    {
+    public function getNumber() {
         return $this->number;
     }
 
@@ -96,8 +92,7 @@ class Sprint
      * @param \DateTime $dateStart
      * @return Sprint
      */
-    public function setDateStart($dateStart)
-    {
+    public function setDateStart($dateStart) {
         $this->dateStart = $dateStart;
 
         return $this;
@@ -108,8 +103,7 @@ class Sprint
      *
      * @return \DateTime
      */
-    public function getDateStart()
-    {
+    public function getDateStart() {
         return $this->dateStart;
     }
 
@@ -119,8 +113,7 @@ class Sprint
      * @param \DateTime $dateEnd
      * @return Sprint
      */
-    public function setDateEnd($dateEnd)
-    {
+    public function setDateEnd($dateEnd) {
         $this->dateEnd = $dateEnd;
 
         return $this;
@@ -131,8 +124,7 @@ class Sprint
      *
      * @return \DateTime
      */
-    public function getDateEnd()
-    {
+    public function getDateEnd() {
         return $this->dateEnd;
     }
 
@@ -142,8 +134,7 @@ class Sprint
      * @param \AppBundle\Entity\Project $project
      * @return Sprint
      */
-    public function setProject(\AppBundle\Entity\Project $project = null)
-    {
+    public function setProject(\AppBundle\Entity\Project $project = null) {
         $this->project = $project;
 
         return $this;
@@ -154,8 +145,7 @@ class Sprint
      *
      * @return \AppBundle\Entity\Project 
      */
-    public function getProject()
-    {
+    public function getProject() {
         return $this->project;
     }
 
@@ -165,8 +155,7 @@ class Sprint
      * @param \AppBundle\Entity\Task $task
      * @return Sprint
      */
-    public function addTask(\AppBundle\Entity\Task $task)
-    {
+    public function addTask(\AppBundle\Entity\Task $task) {
         $this->task[] = $task;
 
         return $this;
@@ -177,8 +166,7 @@ class Sprint
      *
      * @param \AppBundle\Entity\Task $task
      */
-    public function removeTask(\AppBundle\Entity\Task $task)
-    {
+    public function removeTask(\AppBundle\Entity\Task $task) {
         $this->task->removeElement($task);
     }
 
@@ -187,8 +175,14 @@ class Sprint
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getTask()
-    {
+    public function getTask() {
         return $this->task;
     }
+
+    public function __toString() {
+        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
+        $formatter->setPattern('d MMMM Y');
+        return $formatter->format($this->getDateStart()) . ' — ' . $formatter->format($this->getDateEnd());
+    }
+
 }

@@ -1,3 +1,38 @@
+/* font-family: "PTSansRegular"; */
+@font-face {
+    font-family: "PTSansRegular";
+    src: url("../fonts/PTSansRegular/PTSansRegular.eot");
+    src: url("../fonts/PTSansRegular/PTSansRegular.eot?#iefix")format("embedded-opentype"),
+        url("../fonts/PTSansRegular/PTSansRegular.woff") format("woff"),
+        url("../fonts/PTSansRegular/PTSansRegular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+/* font-family: "PTSansItalic"; */
+@font-face {
+    font-family: "PTSansItalic";
+    src: url("../fonts/PTSansItalic/PTSansItalic.eot");
+    src: url("../fonts/PTSansItalic/PTSansItalic.eot?#iefix")format("embedded-opentype"),
+        url("../fonts/PTSansItalic/PTSansItalic.woff") format("woff"),
+        url("../fonts/PTSansItalic/PTSansItalic.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+/* font-family: "PTSansBold"; */
+@font-face {
+    font-family: "PTSansBold";
+    src: url("../fonts/PTSansBold/PTSansBold.eot");
+    src: url("../fonts/PTSansBold/PTSansBold.eot?#iefix")format("embedded-opentype"),
+        url("../fonts/PTSansBold/PTSansBold.woff") format("woff"),
+        url("../fonts/PTSansBold/PTSansBold.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+}
+
+body{
+    font-family: arial , Helvetica ,sans-serif;
+}
+
 @media (min-width: 768px) {
     .container {
         width: 100%;
@@ -40,9 +75,6 @@ select:-moz-focusring {
     text-shadow: 0 0 0 #6F6F6F;
 }
 
-body{
-    font-family: Helvetica,sans-serif;
-}
 
 h3{
     margin-top: 10.5px;
@@ -79,9 +111,38 @@ h3{
     margin-left: 2px;
 }
 
+.dashboard-tasks-container {
+    margin-left: -9px;
+    margin-right: -9px;
+}
+
+.task-group-container-wrapper{
+    padding: 8px;
+}
+
 .task-group-container{
+
+    height: 100vh;
+    max-height: 100vh;
+    //overflow-y: scroll;
+    background: repeating-linear-gradient(
+        -55deg,
+        #444,
+        #444 10px,
+        #555 10px,
+        #555 20px
+        );
+
+    -webkit-box-shadow: 0px 6px 12px -2px rgba(0,0,0,0.92);
+    -moz-box-shadow: 0px 6px 12px -2px rgba(0,0,0,0.92);
+    box-shadow: 0px 6px 12px -2px rgba(0,0,0,0.92);
+
     border: 1px solid #3d3d3d;
     border-radius: 2px;
+}
+
+a#archive-project{
+    cursor: pointer;   
 }
 
 .task-group-header{
@@ -102,21 +163,70 @@ h3{
 }
 
 .task-link-name{
+    color: #333;
+}
+
+.task-link-name:hover,
+.task-link-name:focus{
     color: #3d3d3d;
-    text-decoration: underline;
+}
+
+.child-tasks-container > .task-container{
+   // padding: 0px 0px 0px 5px ;
 }
 
 .task-container{
     padding: 0 5px 5px 5px;
+    position: relative;
     -webkit-box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.60);
     -moz-box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.60);
     box-shadow: 0px 1px 1px 0px rgba(0,0,0,0.60);
-    border-bottom: 1px solid rgba(0,0,0,0.60);
-    margin-bottom: 1px;
+
+
+    border-top: 1px solid whitesmoke;
 }
+
 
 .task-container:last-child{
     margin-bottom: 0;
+}
+
+.edit-task-icon{
+    font-size: 13px;
+    position: absolute;
+    left: -1px;
+    top: 6px;
+    color: #333;
+}
+
+.parent-task{
+    position: absolute;
+    left: 0px;
+    height: 100%;
+    background-color: #555;
+    z-index: 100;
+    width: 4px;
+}
+
+.parent-task-toggle-children{
+    cursor: pointer;
+}
+
+.child-task{
+    position: absolute;
+    left: 0px;
+    height: 100%;
+    z-index: 100;
+    width: 4px;
+    background: repeating-linear-gradient(
+        60deg, 
+        #999, 
+        #999 5px,
+        #555 5px,
+        #555 10px
+        );
+    border-right: 1px solid #333;
+    background-size:5px 200px;
 }
 
 .no-tasks-container{
@@ -142,6 +252,40 @@ h3{
         #555 20px
         );
 }
+
+.task-subtask-link-container{
+    margin-top: 5px;
+    margin-left: -17px;
+}
+
+.task-subtask-link-container a{
+    color: #333;
+}
+
+.task-subtask-link-container .glyphicon-triangle-bottom{
+    vertical-align: text-top;
+}
+
+.alert-warning {
+    border-color: rgba(223, 181, 108, 0.6);
+    color: #826430;
+    background-color: rgba(239, 225, 179, 0.6);
+    border-radius: 2px;
+}
+
+.alert-success {
+    border-color: #8AC38B;
+    color: #356635;
+    background-color: #CDE0C4;
+}
+
+.alert-info {
+    border-color: #9CB4C5;
+    color: #305D8C;
+    background-color: #D6DDE7;
+}
+
+
 
 /*  
 .alert-warning {
@@ -182,9 +326,9 @@ h3{
     border-color: #2C699D;
 }
 .btn-primary.active,.btn-primary:active,.btn-primary:focus,.btn-primary:hover,.open>.dropdown-toggle.btn-primary{
-	color:#fff;
-	background-color:#275b89;
-	border-color:#1f496d
+        color:#fff;
+        background-color:#275b89;
+        border-color:#1f496d
 }
 .btn-success {
     color: #FFF;
@@ -192,9 +336,9 @@ h3{
     border-color: #659265;
 }
 .btn-success.active,.btn-success:active,.btn-success:focus,.btn-success:hover,.open>.dropdown-toggle.btn-success{
-	color:#fff;
-	background-color:#5b835b;
-	border-color:#4c6e4c
+        color:#fff;
+        background-color:#5b835b;
+        border-color:#4c6e4c
 }
 .btn-info {
     color: #FFF;
@@ -202,9 +346,9 @@ h3{
     border-color: #4E7A8C;
 }
 .btn-info.active,.btn-info:active,.btn-info:focus,.btn-info:hover,.open>.dropdown-toggle.btn-info{
-	color:#fff;
-	background-color:#456b7b;
-	border-color:#385764
+        color:#fff;
+        background-color:#456b7b;
+        border-color:#385764
 }
 .btn-warning {
     color: #FFF;
@@ -212,9 +356,9 @@ h3{
     border-color: #B1811D;
 }
 .btn-warning.active,.btn-warning:active,.btn-warning:focus,.btn-warning:hover,.open>.dropdown-toggle.btn-warning{
-	color:#fff;
-	background-color:#9b711a;
-	border-color:#7d5b15
+        color:#fff;
+        background-color:#9b711a;
+        border-color:#7d5b15
 }
 .btn-danger {
     color: #FFF;
@@ -222,27 +366,33 @@ h3{
     border-color: #900323;
 }
 .btn-danger.active,.btn-danger:active,.btn-danger:focus,.btn-danger:hover,.open>.dropdown-toggle.btn-danger{
-	color:#fff;
-	background-color:#77021d;
-	border-color:#540114
+        color:#fff;
+        background-color:#77021d;
+        border-color:#540114
 }
 
 */
 
-.important-task-container{
-    background-color: #FCF8E3;
+
+.important-task-container {
+    background-color: #f3f3d1;
+    border-bottom: 1px solid #E6E6D1;
 }
 
-.done-task-container{
-    background-color: #CDE0C4;
+.done-task-container {
+    background-color: #daebcf;
+    border-bottom: 1px solid  #CBDBC1;
 }
 
-.simple-task-container{
-    background-color: #D9EDF7;   
+.simple-task-container {
+    background-color: #e4eff8;
+    border-bottom: 1px solid #CED8E0;
 }
+
 
 .simple-button{
-    border:1px solid #25729a; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+    border:1px solid #25729a; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px; 
+    padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
     background-color: #3276B1;
     border-color: #2C699D;
 }
@@ -252,13 +402,14 @@ h3{
 .simple-button:focus,
 .simple-button:hover,
 .open>.dropdown-toggle.simple-button{
-	color:#fff;
-	background-color:#275b89;
-	border-color:#1f496d
+    color:#fff;
+    background-color:#275b89;
+    border-color:#1f496d
 }
 
 .finish-button{
-    border:1px solid #495267; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+    border:1px solid #495267; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px; 
+    padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
     background-color: #57889C;
     border-color: #4E7A8C;
 
@@ -269,13 +420,14 @@ h3{
 .finish-button:focus,
 .finish-button:hover,
 .open>.dropdown-toggle.finish-button{
-	color:#fff;
-	background-color:#456b7b;
-	border-color:#385764
+    color:#fff;
+    background-color:#456b7b;
+    border-color:#385764
 }
 
 .success-button{
-    border:1px solid #377613; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+    border:1px solid #377613; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px; 
+    padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
     background-color: #739E73;
     border-color: #659265;
 }
@@ -285,13 +437,14 @@ h3{
 .success-button:focus,
 .success-button:hover,
 .open>.dropdown-toggle.success-button{
-	color:#fff;
-	background-color:#5b835b;
-	border-color:#4c6e4c
+    color:#fff;
+    background-color:#5b835b;
+    border-color:#4c6e4c
 }
 
 .alert-button{
-    border:1px solid #8f1919; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px;font-family:arial, helvetica, sans-serif; padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
+    border:1px solid #8f1919; -webkit-border-radius: 3px; -moz-border-radius: 3px;border-radius: 3px;font-size:12px; 
+    padding: 10px 10px 10px 10px; text-decoration:none; display:inline-block;text-shadow: -1px -1px 0 rgba(0,0,0,0.3);font-weight:bold; color: #FFFFFF;
     background-color: #A90329;
     border-color: #900323;
 }
@@ -301,17 +454,17 @@ h3{
 .alert-button:focus,
 .alert-button:hover,
 .open>.dropdown-toggle.alert-button{
-	color:#fff;
-	background-color:#77021d;
-	border-color:#540114
+    color:#fff;
+    background-color:#77021d;
+    border-color:#540114
 }
 
 .simple-button,
 .success-button,
 .alert-button,
 .finish-button{
-    padding: 5px 10px;
-    min-width: 85px;
+    padding: 4px 8px;
+    min-width: 80px;
 }
 
 .custom-modal{
@@ -353,5 +506,6 @@ table.full-task-view tr td{
 
 table.full-task-view tr td:first-child{
     text-align: right;
-    width: 180px;
+    width: 16%;
 }
+

@@ -19,4 +19,43 @@ class SprintRepository extends EntityRepository {
                         ->getOneOrNullResult();
     }
 
+    public function getActualSprintsTasksByProjectId($project_id) {
+
+        $date = date('Y-m-d');
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+                ->select('Sprint', 'Task', 'ChildTask')
+                ->from('AppBundle\Entity\Sprint', 'Sprint')
+                ->leftJoin('Sprint.task', 'Task')
+                ->leftJoin('Task.children', 'ChildTask')
+                ->where('Sprint.dateEnd >= :now_date')
+                ->andWhere('Sprint.project= :id')
+                ->setParameters(array(
+                    'now_date' => $date,
+                    'id' => $project_id));
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    public function getExpiredSprintsTasksByProjectId($project_id) {
+        $date = date('Y-m-d');
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+                ->select('Sprint', 'Task', 'ChildTask')
+                ->from('AppBundle\Entity\Sprint', 'Sprint')
+                ->leftJoin('Sprint.task', 'Task')
+                ->leftJoin('Task.children', 'ChildTask')
+                ->where('Sprint.dateEnd < :now_date')
+                ->andWhere('Sprint.project= :id')
+                ->setParameters(array(
+                    'now_date' => $date,
+                    'id' => $project_id));
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
 }

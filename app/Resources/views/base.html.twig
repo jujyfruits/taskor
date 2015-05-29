@@ -6,19 +6,19 @@
     {% block head %}
         <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap.css') }}" />
 
-        {% stylesheets '@AppBundle/Resources/public/css/custom.css' filter='cssrewrite' %}
-        <link rel="stylesheet" href="{{ asset_url }}" />
-        {% endstylesheets %}
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/custom.css')}}" />
 
-        {% javascripts '@AppBundle/Resources/public/js/jquery-1.11.3.min.js' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-        {% javascripts '@AppBundle/Resources/public/js/bootstrap.min.js' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-        {% javascripts '@AppBundle/Resources/public/js/jquery.validate.min.js' %}
-        <script type="text/javascript" src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+        {% block javascripts %} 
+            {% javascripts '@AppBundle/Resources/public/js/jquery-1.11.3.min.js' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+            {% javascripts '@AppBundle/Resources/public/js/bootstrap.min.js' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+            {% javascripts '@AppBundle/Resources/public/js/jquery.validate.min.js' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+        {% endblock javascripts %}
 
         <title>{% block title %} Task Tracker {% endblock title %}</title>
     {% endblock head %}

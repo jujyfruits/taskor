@@ -33,12 +33,18 @@ class User extends BaseUser {
      **/
     private $task;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
+     **/
+    private $log;
+    
     
     public function __construct()
     {
         parent::__construct();
         $this->project = new \Doctrine\Common\Collections\ArrayCollection();
         $this->task = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->log = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     

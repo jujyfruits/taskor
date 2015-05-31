@@ -4,20 +4,26 @@
     {% if task.getParent() %}  <div class="child-task"></div> {% endif %}
     <div style="margin-left:5px;margin-right:-5px;" class="row">
 
-        <div class="col-xs-8">
+        <div class="{{ task.getUser ? 'col-xs-7' :'col-xs-9' }}">
             {% if is_granted('ROLE_MANAGER') %}
-                <a href="{{ path('project_edit', {'id':1 }) }}" title="Редактировать задачу"><span class="glyphicon glyphicon-pencil edit-task-icon"></span></a>
+                <a href="{{ path('task_edit', {'project_id': project.id, 'task_id':task.id }) }}" title="Редактировать задачу"><span class="glyphicon glyphicon-pencil edit-task-icon"></span></a>
                 {% endif %}
-            <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id,'task_id':task.id}) }}">                
+            <a class="task-link-name" href="{{ path('task_show',{'project_id':project.id, 'task_id':task.id}) }}">                
                 {{ task.name }}
             </a>
         </div>
-        <div class="col-xs-4">
-            {% if (task.getUser) %}
-                <span style="display:inline;padding: 5px;" class="glyphicon glyphicon-user"></span><span>{{ task.getUser }}</span>
-                {% endif %}
+        <div style="text-align:right;" class="{{ task.getUser ? 'col-xs-5' :'col-xs-3 glyphicon-muted' }}">
+            <span class="glyphicon glyphicon-user task-inline-glyphicons"></span>
+            {% if task.getUser %}
+                <span class="glyphicon-related-text">{{task.getUser}}</span>
+            {% endif %}
+            <span class="glyphicon glyphicon-time task-inline-glyphicons"></span>
+            {% if (task.estimatedTime) or (task.spendedTime) %}
+                <span class="glyphicon-related-text">{{ task.estimatedTime? task.estimatedTime~'ч':'–' }} / {{ task.spendedTime? task.spendedTime~'ч':'–' }}</span>
+            {% endif %}
         </div>
-        <div class="clearfix "></div>
+        <div class="clearfix"></div>
+        <div class=" task-bottom-buttons-separator"></div>
         <div class="col-xs-5 task-subtask-link-container">
             {% if task.getChildren().count %}
                 <a data-toggle="collapse" data-target=".{{task.Id}}-parent-task-child" id="{{task.Id}}-parent-task" class="parent-task-toggle-children">
@@ -29,11 +35,7 @@
         </div>
         <div class="col-xs-7">
             <div class="pull-right">
-                <input id type="hidden" value="{{ task.name }}">
-{# удалить нахзуй кнопку  #}
-                {% if (task.getChildren().count) and (task |checkchildrenstate) %}
-                    <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>
-                {% elseif not (task.getChildren().count) %}
+                {% if not (task.getChildren().count) %}
                     {% if task.state  == 'Started'  and task.getUser == user %}
                         <button data-id="{{ task.Id }}" type="button" value="deny" class="button-change-state button alert-button">Отказаться</button>
                         <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>

@@ -33,12 +33,18 @@ class User extends BaseUser {
      **/
     private $task;
     
+    /**
+     * @ORM\OneToMany(targetEntity="Log", mappedBy="user")
+     **/
+    private $log;
+    
     
     public function __construct()
     {
         parent::__construct();
         $this->project = new \Doctrine\Common\Collections\ArrayCollection();
         $this->task = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->log = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     
@@ -141,5 +147,38 @@ class User extends BaseUser {
     public function getTask()
     {
         return $this->task;
+    }
+
+    /**
+     * Add log
+     *
+     * @param \AppBundle\Entity\Log $log
+     * @return User
+     */
+    public function addLog(\AppBundle\Entity\Log $log)
+    {
+        $this->log[] = $log;
+
+        return $this;
+    }
+
+    /**
+     * Remove log
+     *
+     * @param \AppBundle\Entity\Log $log
+     */
+    public function removeLog(\AppBundle\Entity\Log $log)
+    {
+        $this->log->removeElement($log);
+    }
+
+    /**
+     * Get log
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLog()
+    {
+        return $this->log;
     }
 }

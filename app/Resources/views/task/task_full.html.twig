@@ -2,16 +2,22 @@
     <table class="full-task-view">
         <tr>
             <td>Название:</td>
-            <td>{{  task.Name }}</td>
+            {% if path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) == path('task_show',{'project_id':project.id,'task_id':task.id}) %}
+                <td>{{  task.Name }}</td>
+            {% else %}
+                <td><a href='{{path('task_show',{'project_id':project.id,'task_id':task.id})}}'>{{  task.Name }}</a></td>
+            {% endif %}
         </tr>
         <tr>
             <td>Дата создания:</td>
             <td>{{  task.CreatedAt | localizeddate('long', 'none', 'd MMMM') }}</td>
         </tr>
-        <tr>
-            <td>Участник:</td>
-            <td>{{  task.getuser }}</td>
-        </tr>
+        {% if not (task.getChildren().count) %}
+            <tr>
+                <td>Участник:</td>
+                <td>{{  task.getuser }}</td>
+            </tr>
+        {% endif %}
         <tr>
             <td>Описание:</td>
             <td>{{  task.Description }}</td>
@@ -24,24 +30,31 @@
             <td>Установленный спринт:</td>
             <td>{{  sprint }}</td>
         </tr>
-        <tr>
-            <td>Предполагаемое время выполнения:</td>
-            <td>{{  task.EstimatedTime }}</td>
-        </tr>
-        <tr>
-            <td>Итоговое время выполнения:</td>
-            <td>{{  task.SpendedTime }}</td>
-        </tr>
+        {% if not (task.getChildren().count) %}
+            <tr>
+                <td>Предполагаемое время выполнения:</td>
+                <td>{{  task.EstimatedTime ? task.EstimatedTime~' часов' : ''}}</td>
+            </tr>
+            <tr>
+                <td>Итоговое время выполнения:</td>
+                <td>{{  task.SpendedTime ? task.SpendedTime~' часов' : ''}}</td>
+            </tr>
+        {% endif %}
     </table>
 
     <div class="row">
-        <div class="col-sm-offset-1 col-sm-4">
+        <div class="full-task-button-container col-sm-offset-1 col-sm-4">
             <input id type="hidden" value="{{ task.name }}">
-            {% if task.State  == 'Started'%}
-                <button data-id="{{ task.Id }}" type="button" value="deny" class="button-change-state button alert-button">Отказаться</button>
-                <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>
-            {% elseif task.State == 'Unstarted' %}
-                <button data-id="{{ task.Id }}" type="button" value="start" class="button-change-state button success-button">Начать</button>
+            {% if not (task.getChildren().count) %}
+                {% if task.state  == 'Started'  and task.getUser == user %}
+                    <button data-id="{{ task.Id }}" type="button" value="deny" class="button-change-state button alert-button">Отказаться</button>
+                    <button data-id="{{ task.Id }}" type="button" value="finish" class="button-change-state button finish-button">Закончить</button>
+                {% elseif task.state == 'Unstarted' %}
+                    <button data-id="{{ task.Id }}" type="button" value="start" class="button-change-state button success-button">Начать</button>
+                {% endif %}
+            {% else %}
+                <div style='width: 200px'><strong>{{task.getChildren().count}} 
+                        {{ task.getChildren().count|subtaskrus }}</strong></div>
             {% endif %}
         </div>
     </div>

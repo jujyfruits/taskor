@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Projects
+{% endblock title %}
+
+{% block content %}
+    <div>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Архивированные проекты</h3>
+                <div class="list-project-container">
+                    {% for project in user_projects %}
+                        <div class="{{ project.Id }}-project-container">
+                            <div class="well">
+                                <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
+                                <span class="text-muted">{{ project.CreatedAt  | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm')  }}</span>
+                                {% if is_granted('ROLE_MANAGER') %}
+                                    <span class="pull-right">
+                                        <a href="{{ path('project_edit', {'id':project.id }) }}" title="Редактировать"><span class="glyphicon glyphicon-pencil"></span></a>
+                                        <a href="{{ path('invite_to_project', {'id':project.id }) }}"title="Добавить пользователей"><span class="glyphicon glyphicon-user"></span></a>
+                                        <a data-id="{{ project.Id }}" id="archive-project" title="Извлечь из архивации"><span class="glyphicon glyphicon-save"></span></a>
+                                    </span>
+                                {% endif %}
+                                <p>{{ project.Description }}</p>
+
+                            </div>
+                        </div>
+                    {% else %}
+                        Здесь будут отображаться ваши проекты.
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="modal-container">
+        <div class="modal fade custom-modal" id="archive-project-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Извлечение из архивации</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            Вы уверены что хотите извлечь из архивации этот проект?
+                        </div>
+                        <form method="post">
+                            <button data-id="" type="submit" value="start" class="modal-button-archive-project button alert-button">Извлечь</button>
+                            <button type="button" class="simple-button" data-dismiss="modal" aria-label="Close">Закрыть</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Modal form handler
+            $('#modal-container').on("click", '.modal-button-archive-project', function () {
+                var project_id = $(this).attr("data-id");
+                $('form').on('submit', function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ path('ajax_archive_project') }}",
+                        data: {
+                            project_id: project_id,
+                            action: 'unarchive'
+                        },
+                        cache: false,
+                        success: function () {
+                            $('#archive-project-modal').modal('hide');
+                            console.log($('.' + project_id + '-project-container'));
+                            $('.' + project_id + '-project-container').remove();
+                        }
+                    });
+                });
+            });
+            // Archive button handler
+            $('.list-project-container').on("click", '#archive-project', function () {
+                var project_id = $(this).attr("data-id");
+                $('#archive-project-modal').modal('show');
+                $('#archive-project-modal').find('.modal-button-archive-project').attr("data-id", project_id);
+            });
+        });
+    </script>
+{% endblock content %}

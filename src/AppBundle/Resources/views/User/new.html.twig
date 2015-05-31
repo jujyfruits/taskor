@@ -1,15 +1,21 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Создание пользователя
+{% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('user') }}">Список пользователей</a>
+        &mdash;Создание нового пользователя
+    </h3>
+{% endblock %}
+
 {% block content -%}
-    <h1>User creation</h1>
+    <div class="row">
+        <div class="col-sm-6">
+            {{ form(form) }}
+        </div>
+    </div>
 
-    {{ form(form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('user') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
 {% endblock %}

@@ -15,8 +15,7 @@ use AppBundle\Form\UserType;
  *
  * @Route("/user")
  */
-class UserController extends Controller
-{
+class UserController extends Controller {
 
     /**
      * Lists all User entities.
@@ -25,16 +24,27 @@ class UserController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         $em = $this->getDoctrine()->getManager();
 
         $entities = $em->getRepository('AppBundle:User')->findAll();
+
+        $qb = $em->createQueryBuilder();
+
+        $qb
+                ->select('User')
+                ->from('AppBundle\Entity\User', 'User');
+
+        $result = $qb->getQuery();
+        $result1 = $result->getResult();
+
+        dump($result1);
 
         return array(
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new User entity.
      *
@@ -42,13 +52,15 @@ class UserController extends Controller
      * @Method("POST")
      * @Template("AppBundle:User:new.html.twig")
      */
-    public function createAction(Request $request)
-    {
+    public function createAction(Request $request) {
         $entity = new User();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $entity->setPlainPassword($form->getData()->getpassword());
+            
+            $entity->setEnabled(true);
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -58,7 +70,7 @@ class UserController extends Controller
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -69,14 +81,15 @@ class UserController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(User $entity)
-    {
-        $form = $this->createForm(new UserType(), $entity, array(
+    private function createCreateForm(User $entity) {
+
+        $roles = $this->getAllRoles();
+        $form = $this->createForm(new UserType($roles), $entity, array(
             'action' => $this->generateUrl('user_create'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Создать', 'attr'=> array('class'=>'success-button')));
 
         return $form;
     }
@@ -88,14 +101,13 @@ class UserController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function newAction()
-    {
+    public function newAction() {
         $entity = new User();
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -106,8 +118,7 @@ class UserController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function showAction($id)
-    {
+    public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('AppBundle:User')->find($id);
@@ -119,7 +130,7 @@ class UserController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -131,8 +142,7 @@ class UserController extends Controller
      * @Method("GET")
      * @Template()
      */
-    public function editAction($id)
-    {
+    public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('AppBundle:User')->find($id);
@@ -142,33 +152,38 @@ class UserController extends Controller
         }
 
         $editForm = $this->createEditForm($entity);
+
+
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-    * Creates a form to edit a User entity.
-    *
-    * @param User $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(User $entity)
-    {
-        $form = $this->createForm(new UserType(), $entity, array(
+     * Creates a form to edit a User entity.
+     *
+     * @param User $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
+    private function createEditForm(User $entity) {
+
+        $roles = $this->getAllRoles();
+
+        $form = $this->createForm(new UserType($roles), $entity, array(
             'action' => $this->generateUrl('user_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Сохранить', 'attr'=> array('class'=>'success-button')));
 
         return $form;
     }
+
     /**
      * Edits an existing User entity.
      *
@@ -176,8 +191,7 @@ class UserController extends Controller
      * @Method("PUT")
      * @Template("AppBundle:User:edit.html.twig")
      */
-    public function updateAction(Request $request, $id)
-    {
+    public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository('AppBundle:User')->find($id);
@@ -193,23 +207,23 @@ class UserController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('user_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('user_show', array('id' => $id)));
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a User entity.
      *
      * @Route("/{id}", name="user_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, $id)
-    {
+    public function deleteAction(Request $request, $id) {
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
 
@@ -235,13 +249,24 @@ class UserController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm($id)
-    {
+    private function createDeleteForm($id) {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('user_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
+                        ->setAction($this->generateUrl('user_delete', array('id' => $id)))
+                        ->setMethod('DELETE')
+                        ->add('submit', 'submit', array('label' => 'Удалить', 'attr'=> array('class'=>'alert-button')))
+                        ->getForm()
         ;
     }
+
+    public function getAllRoles() {
+
+        $roleHierarchy = $this->container->getParameter('security.role_hierarchy.roles');
+        $roles = array_keys($roleHierarchy);
+
+        foreach ($roles as $role) {
+            $theRoles[$role] = $role;
+        }
+        return $theRoles;
+    }
+
 }

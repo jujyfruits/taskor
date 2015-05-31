@@ -1,16 +1,28 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}
+    Редактирование {{ entity.username }}
+{% endblock %}
+
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('user_new') }}">Добавить нового пользователя</a></li>
+        {% endif %}
+    {% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('user') }}">Список пользователей</a>
+        &mdash;
+        Редактирование {{ entity.username }}
+    </h3>
+{% endblock %}
+
 {% block content -%}
-    <h1>User edit</h1>
-
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('user') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+    <div class="row">
+        <div class="col-sm-6">
+            {{ form(edit_form) }}
+        </div>
+    </div>
+    {{ form(delete_form) }}
 {% endblock %}

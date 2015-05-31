@@ -1,16 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    Creating new task
+    Новая задача
+{% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('project_show',{'id':project.Id}) }}">{{ project.Name }}</a>
+        &mdash;
+        Новая задача
+    </h3>
 {% endblock %}
 
 {% block content %}
-    <h3>Новая задача в проекте 
-        <a href="{{ path('project_show',{'id':project.id}) }}">
-            <strong>{{ project.Name }}</strong>
-        </a>
-    </h3>
-
     <div class="row">
         <div class="col-md-6">
             <form action="{{ path("task_create",{'project_id':project.id}) }}" method="post">

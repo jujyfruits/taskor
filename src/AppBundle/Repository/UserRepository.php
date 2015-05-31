@@ -13,7 +13,7 @@ class UserRepository extends EntityRepository {
           (SELECT p FROM AppBundle\Entity\User as p
           LEFT JOIN p.project s WHERE s.id =" . $id . ')');
 
-        return $result->getOneOrNullResult();
+        return $result->getResult();
     }
 
 }

@@ -195,7 +195,7 @@ a#archive-project{
     font-size: 13px;
     position: absolute;
     left: -1px;
-    top: 6px;
+    top: 5px;
     color: #333;
 }
 
@@ -509,3 +509,39 @@ table.full-task-view tr td:first-child{
     width: 16%;
 }
 
+.task-inline-glyphicons{
+    display:inline;
+    padding: 5px;
+}
+
+.task-bottom-buttons-separator{
+    margin-top: 5px;
+}
+
+.glyphicon-muted{
+    color: #666;
+}
+
+.glyphicon-related-text{
+    padding-right: 5px;
+}
+
+.full-task-subtask-element-header{
+    border-color: #45474B !important;
+    background: none repeat scroll 0% 0% #4C4F53;
+    color: #FFF;
+}
+.full-task-subtask-container .task-full-container{
+    min-height: 20px;
+    padding: 10px;
+    margin-bottom: 20px;
+    padding-top: 0;
+    background-color: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    border-radius: 0px;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.05) inset;
+}
+
+.full-task-subtask-container .full-task-button-container{
+    width: 100%;
+}

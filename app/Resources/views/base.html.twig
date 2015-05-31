@@ -32,9 +32,8 @@
                             <a href="{{path('project_index')}}" class="navbar-brand">Watchtower</a>
                             <ul class="nav navbar-nav">
                                 {% block navbar %}
-                                    <li><a href="/project">Проекты</a></li>
-                                    <li><a href="/">Задания</a></li>
-                                    <li><a href="/">Пользователи</a></li>
+                                    <li><a href="{{ path('project_index') }}">Проекты</a></li>
+                                    <li><a href="{{ path('user') }}">Пользователи</a></li>
                                     <span class="navbar-additional-pills">
                                         <ul class="nav navbar-nav">
                                             {% block additional_navbar_pills %}
@@ -46,7 +45,7 @@
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="nav-bar-logout-container">
                                     <span class="top-navbar-text">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span>
-                                    <a class="nav-bar-logout" href="logout">Выйти
+                                    <a class="nav-bar-logout" href="{{ path('fos_user_security_logout') }}">Выйти
                                         <span class="glyphicon glyphicon-align-left glyphicon-log-out glyphicon-white" aria-hidden="true"></span>
                                     </a>
                                 </li>
@@ -78,8 +77,8 @@
                     {% endblock %}
 
                     {% block footer %}
-                        <div class="footer text-center">
-                            <hr><a href="#">Skovoroda Production</a>
+                        <div class="footer text-center text-muted">
+                            <hr>Бобёр Марк 2015
                         </div>
                     {% endblock  %}
 

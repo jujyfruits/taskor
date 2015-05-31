@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Редактирование задачи
+{% endblock %}
+
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
+        <li><a href="{{ path('subtask_create',{'project_id':project.id,'parent_task_id':task.Id}) }}">Создать подзадачу текущей</a></li>
+        {% endif %}
+    {% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('project_show',{'id':project.Id}) }}">{{ project.Name }}</a>
+        &mdash;
+        Редактирование
+        {{ task.Name }}
+    </h3>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <form action="{{ path("task_edit",{'project_id':project.id,'task_id':task.Id}) }}" method="post">
+
+                {{ form_widget(form) }}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,32 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block content -%}
-    <h1>User</h1>
+{% block title %}
+    Пользователь {{ entity.username }}
+{% endblock %}
 
-    <table class="record_properties">
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('user_edit', { 'id': entity.id }) }}">Редактировать</a></li>
+        <li><a href="{{ path('user_new') }}">Добавить нового пользователя</a></li>
+        {% endif %}
+    {% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('user') }}">Список пользователей</a>
+        &mdash;
+        {{ entity.username }}
+    </h3>
+{% endblock %}
+
+{% block content -%}
+    <table class="record_properties full-task-view">
         <tbody>
             <tr>
                 <th>Id</th>
                 <td>{{ entity.id }}</td>
             </tr>
+
             <tr>
-                <th>Avatar</th>
-                <td>{{ entity.avatar }}</td>
+                <th>Юзернейм</th>
+                <td>{{ entity.username }}</td>
             </tr>
+
+            <tr>
+                <th>Имейл</th>
+                <td>{{ entity.email }}</td>
+            </tr>
+
+            <tr>
+                <th>Роли</th>
+                <td>{{ entity.roles|join(',')}}</td>
+            </tr>
+
+            <tr>
+                <th>Дата последнего входа</th>
+                <td>{{ entity.lastLogin| localizeddate('long', 'none', null, null, 'd MMMM Y H:mm')  }}</td>
+            </tr>
+
+            <tr>
+                <th>Заблокирован</th>
+                <td>{{ entity.enabled? 'Нет' :'Да' }}</td>
+            </tr>
+
+            <tr>
         </tbody>
     </table>
 
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('user') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('user_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+        {{ form(delete_form) }}
 {% endblock %}

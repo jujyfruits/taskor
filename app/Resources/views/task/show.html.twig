@@ -6,6 +6,7 @@
 
 {% block additional_navbar_pills %}
     {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('task_edit',{'project_id':project.id,'task_id':task.Id}) }}">Редактировать</a></li>
         <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
         <li><a href="{{ path('subtask_create',{'project_id':project.id,'parent_task_id':task.Id}) }}">Создать подзадачу текущей</a></li>
         {% endif %}
@@ -32,55 +33,68 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-sm-6">
-            <ul class="list-group">
-                {% for task_child in child_tasks %}
-                    <li class="list-group-item"><a href="{{ path('task_show', {project_id: project_id, task_id: task_child.id}) }}">{{ task_child.Name }}</a></li>
-                    {% endfor %}
-            </ul>
+        <div class="full-task-subtask-container">
+            {% for task_child in child_tasks %}
+                {% if loop.first %} 
+                    <div class='col-xs-12'>
+                        <hr>
+                        <div class="text-center"><h3>Подзадачи</h3></div>
+                    </div>
+                {% endif %}
+                <div class="col-sm-4">
+                    <div class="task-full-container-wrapper">
+                        <div class="full-task-subtask-element-header">&nbsp;</div>
+                        {{ include('task/task_full.html.twig', { 'task': task_child,'project': project }) }}
+                    </div>
+                </div>
+                {% if loop.index // 3 %} 
+                    <div class='clearfix'></div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
+</div>
 
-    <div id="modal-container">
-        <div class="modal fade custom-modal" id="task-state-modal">
+<div id="modal-container">
+    <div class="modal fade custom-modal" id="task-state-modal">
 
-        </div>
     </div>
+</div>
 
-    <script>
-        $(document).ready(function () {
-            // Modal form handler
-            $('#modal-container').on("click", '.modal-button-change-state', function () {
-                var new_state = $(this).attr("value");
-                var task_id = $(this).attr("data-id");
-                $('form').on('submit', [new_state, task_id], function (e) {
-                    e.preventDefault();
-                    if ($(this).valid()) {
-                    var estimated_time = $('#form_estimated_time').val();
-                    var spended_time = $('#form_spended_time').val();
-                    $.ajax({
-                    type: "POST",
-                            url: "{{ path('ajax_change_task_state') }}",
-                            data: {
-                            project_id:{{ project.id }},
-                                    task_id: task_id,
-                                    new_state : new_state,
-                                    estimated_time : estimated_time,
-                                    spended_time : spended_time,
-                                    view: 'full'
-                            },
-                            cache: false,
-                            success: function (data) {
-                            $('#task-state-modal').modal('hide');
-                                    $('.task-full-container').replaceWith(data);
-                            }
-                    });
+<script>
+    $(document).ready(function () {
+    // Modal form handler
+    $('#modal-container').on("click", '.modal-button-change-state', function () {
+    var new_state = $(this).attr("value");
+            var task_id = $(this).attr("data-id");
+            $('form').on('submit', [new_state, task_id], function (e) {
+    e.preventDefault();
+            if ($(this).valid()) {
+    var estimated_time = $('#form_estimated_time').val();
+            var spended_time = $('#form_spended_time').val();
+            $.ajax({
+            type: "POST",
+                    url: "{{ path('ajax_change_task_state') }}",
+                    data: {
+                    project_id:{{ project.id }},
+                            task_id: task_id,
+                            new_state : new_state,
+                            estimated_time : estimated_time,
+                            spended_time : spended_time,
+                            view: 'full'
+                    },
+                    cache: false,
+                    success: function (data) {
+                    $('#task-state-modal').modal('hide');
+                            $('.task-full-container').replaceWith(data);
                     }
-                });
             });
+    }
+    });
+    });
             // Task button handler
             $('.task-full-container-wrapper').on("click", '.button-change-state', function () {
-            var new_state = $(this).attr("value");
+    var new_state = $(this).attr("value");
             var task_id = $(this).attr("data-id");
             $.ajax({
             type: "POST",
@@ -96,9 +110,9 @@
                             $('#task-state-modal').modal('show');
                     }
             });
-            });
-        });
-    </script>
+    });
+    });
+</script>
 {% endblock content %}
 
 

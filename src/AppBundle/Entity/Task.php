@@ -73,8 +73,14 @@ class Task {
      */
     protected $sprint;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Log", mappedBy="task")
+     * */
+    protected $log;
+
     public function __construct() {
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->log = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -330,18 +336,47 @@ class Task {
      * @ORM\PreFlush
      */
     public function setParentState() {
-        
+
         if (!$this->getParent() || $this->getState() != 'Finished') {
             return null;
         }
+
         foreach ($this->getParent()->getChildren() as $anotherChild) {
             if ($anotherChild->getState() != 'Finished') {
                 return null;
             }
         }
         $this->getParent()->setState('Finished');
-        
-        
+    }
+
+    /**
+     * Add log
+     *
+     * @param \AppBundle\Entity\Log $log
+     * @return Task
+     */
+    public function addLog(\AppBundle\Entity\Log $log) {
+        $this->log[] = $log;
+
+        return $this;
+    }
+
+    /**
+     * Remove log
+     *
+     * @param \AppBundle\Entity\Log $log
+     */
+    public function removeLog(\AppBundle\Entity\Log $log) {
+        $this->log->removeElement($log);
+    }
+
+    /**
+     * Get log
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getLog() {
+        return $this->log;
     }
 
 }

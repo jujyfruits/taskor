@@ -34,21 +34,26 @@ class TaskType extends AbstractType {
             ));
             $builder->add('sprint', 'choice', array(
                 'choice_list' => new ChoiceList($this->sprints_numbers, $this->sprints_dates_text),
-                'required' => true,
+                'required' => false,
                 'mapped' => false,
-                'label' => 'Спринт'
+                'label' => 'Спринт',
+                'placeholder' => 'Выберите спринт',
+                'data' => ($this->task_sprint_number) ? $this->sprints_numbers[$this->task_sprint_number] : null
             ));
         }
 
-        $builder->add('save', 'submit', array('attr' => array('class' => 'button simple-button'), 'label' => 'Создать задачу'));
-        $builder->add('saveAndAdd', 'submit', array('attr' => array('class' => 'button finish-button'), 'label' => 'Создать и добавить подзадачу'));
+        $builder->add('save', 'submit', array('attr' => array('class' => 'button simple-button'), 
+            'label' => 'Сохранить'));
+        $builder->add('saveAndAdd', 'submit', array('attr' => array('class' => 'button finish-button'), 
+            'label' => 'Сохранить и добавить подзадачу'));
     }
 
-    function __construct($parent_task, $all_tasks, $sprints_numbers, $sprints_dates_text) {
+    function __construct($parent_task, $all_tasks, $sprints_numbers, $sprints_dates_text, $task_sprint_number) {
         $this->parent_task = $parent_task;
         $this->all_tasks = $all_tasks;
         $this->sprints_numbers = $sprints_numbers;
         $this->sprints_dates_text = $sprints_dates_text;
+        $this->task_sprint_number = $task_sprint_number;
     }
 
     public function getName() {

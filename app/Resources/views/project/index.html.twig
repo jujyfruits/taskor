@@ -7,6 +7,7 @@
 {% block additional_navbar_pills %}
     {% if is_granted('ROLE_MANAGER') %}
         <li><a href="{{ path("project_create") }}">Создать новый проект</a></li>
+        <li><a href="{{ path("projects_archived") }}">Архивированные проекты</a></li>
         {% endif %}
     {% endblock additional_navbar_pills %}
 
@@ -20,7 +21,7 @@
                         <div class="{{ project.Id }}-project-container">
                             <div class="well">
                                 <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
-                                <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
+                                <span class="text-muted">{{ project.CreatedAt  | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm')  }}</span>
                                 {% if is_granted('ROLE_MANAGER') %}
                                     <span class="pull-right">
                                         <a href="{{ path('project_edit', {'id':project.id }) }}" title="Редактировать"><span class="glyphicon glyphicon-pencil"></span></a>
@@ -40,7 +41,26 @@
 
             <div class="col-md-6">
                 <h3>Последние события</h3>
-                <span class="text-muted">Render latest events in all user's projects.</span>
+                <div class="list-project-container">
+                    {% for proj in user_projects %}
+                        {% for event in events %}
+                            {% if event.getTask.getProject.getId == proj.getId %}
+                                {% if loop.first %} 
+                                    <div class="text-center"><h5>Проект {{ proj.getName }}</h5></div>
+                                {% endif %}
+                                <div class="well">
+                                    <span style="font-size:13px;" class="glyphicon glyphicon-user task-inline-glyphicons"></span>
+                                    <strong>{{ event.getUser.getUsername }}</strong>
+                                    {{ event.getEvent | logstaterus}}
+                                    <a href="{{ path('task_show',{'project_id':event.getTask.getProject.getId,'task_id':event.getTask.getId}) }}">
+                                        {{ event.getTask.getName|length > 20 ? event.getTask.getName[:20]~'...' : event.getTask.getName}}
+                                    </a>
+                                    {{ event.getDate | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }} 
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
@@ -87,11 +107,7 @@
                         <button type="button" class="simple-button" data-dismiss="modal" aria-label="Close">Закрыть</button>
                     </form>
                 </div>
-
-
             </div>
-
-
         </div>
     </div>
 </div>
@@ -107,12 +123,13 @@
                     type: "POST",
                     url: "{{ path('ajax_archive_project') }}",
                     data: {
-                        project_id: project_id
+                        project_id: project_id,
+                        action: 'archive'
                     },
                     cache: false,
                     success: function (data) {
                         $('#archive-project-modal').modal('hide');
-                        $(project_id + '-project-container').remove();
+                        $('.' + project_id + '-project-container').remove();
                     }
                 });
             });

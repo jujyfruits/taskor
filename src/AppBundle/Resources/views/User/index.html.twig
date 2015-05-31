@@ -1,41 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block content -%}
-    <h1>User list</h1>
+{% block title %}
+    Список пользователей
+{% endblock %}
 
+{% block additional_navbar_pills %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('user_new') }}">Добавить нового пользователя</a></li>
+        {% endif %}
+    {% endblock %}
+
+{% block breadcrumps %}
+    <h3>Список пользователей</h3>
+{% endblock %}
+
+{% block content -%}
     <table class="records_list table table-hover table-striped">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Avatar</th>
-                <th>Actions</th>
+                <th>Юзернейм</th>
+                <th>Имейл</th>
+                <th>Роли</th>
+                <th>Дата последнего входа</th>
+                <th>Заблокирован</th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('user_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.avatar }}</td>
-                <td>
-                <ul class="list-unstyled">
-                    <li>
-                        <a href="{{ path('user_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('user_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
+            {% for entity in entities %}
+                <tr>
+                    <td><a href="{{ path('user_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                    <td>{{ entity.username }}</td>
+                    <td>{{ entity.email }}</td>
+                    <td>
+                        {{ entity.roles|join(',')}}
+                    </td>
+                    <td>{{ entity.lastLogin| localizeddate('long', 'none', null, null, 'd MMMM Y H:mm')  }}</td>
+                    <td>{{ entity.locked?:'Нет' }}</td>
+                    <td>
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="{{ path('user_show', { 'id': entity.id }) }}">Открыть</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('user_edit', { 'id': entity.id }) }}">Редактировать</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 
-        <ul>
-        <li>
-            <a href="{{ path('user_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
-    {% endblock %}
+{% endblock %}

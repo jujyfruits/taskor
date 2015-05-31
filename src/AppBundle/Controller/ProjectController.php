@@ -19,10 +19,17 @@ class ProjectController extends Controller {
         $em = $this->getDoctrine()->getEntityManager();
         $projects = $em->getRepository('AppBundle:Project')->findAll();
         $user = $this->container->get('security.context')->getToken()->getUser();
-        $user_projects = $user->getProject();
+        $user_projects = $em->getRepository('AppBundle:Project')->getUserProjects($user->getId());
+        $collection = $user->getProject();
+        $project_ids = $collection->map(function($entity) {
+                    return $entity->getId();
+                })->toArray();
+        $events = $em->getRepository('AppBundle:Log')->getLatestEventsByProjects($project_ids);
+
         return $this->render('project/index.html.twig', array(
                     'projects' => $projects,
-                    'user_projects' => $user_projects
+                    'user_projects' => $user_projects,
+                    'events' => $events
         ));
     }
 
@@ -45,6 +52,19 @@ class ProjectController extends Controller {
             }
         }
         return $this->render('project/new.html.twig', array('form' => $form->createView()));
+    }
+
+    /**
+     * @Route("/projects/archived/", name="projects_archived")
+     */
+    public function archivedProjectsAction() {
+        $em = $this->getDoctrine()->getEntityManager();
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        $user_projects = $em->getRepository('AppBundle:Project')->getArchivedUserProjects($user->getId());
+
+        return $this->render('project/archived.html.twig', array(
+                    'user_projects' => $user_projects
+        ));
     }
 
     /**
@@ -152,7 +172,11 @@ class ProjectController extends Controller {
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
-        $project->setArchived(true);
+        if ($request->get('action') == 'unarchive') {
+            $project->setArchived(null);
+        } elseif ($request->get('action') == 'archive') {
+            $project->setArchived(true);
+        }
         $em->persist($project);
         $em->flush();
         return new Response();

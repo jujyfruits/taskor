@@ -9,6 +9,7 @@ use AppBundle\Entity\Project;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Sprint;
+use AppBundle\Entity\Log;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\TaskType;
 
@@ -54,6 +55,12 @@ class TaskController extends Controller {
         } else {
             return;
         }
+
+
+        $log = $this->generateLogForTask($task, $task->getState());
+        $task->addLog($log);
+        $em->persist($log);
+
         $em->persist($task);
         $em->flush();
 
@@ -115,6 +122,9 @@ class TaskController extends Controller {
             throw $this->createNotFoundException('Unable to find requested project.');
         }
         $task = $em->getRepository('AppBundle:Task')->findOneBy(array('id' => $task_id));
+        if (!$task) {
+            throw $this->createNotFoundException('Unable to find requested task.');
+        }
         $task_parents = array();
         array_push($task_parents, $task);
         while (!isset($i)) {
@@ -157,10 +167,9 @@ class TaskController extends Controller {
         }
         $all_tasks = $project->getTask();
         $task = new Task();
+        list($sprints_numbers, $sprints_dates, $sprints_dates_text, $current_sprint) = $this->generateSprintsForTask($project, $task);
 
-        list($sprints_numbers, $sprints_dates, $sprints_dates_text, $current_sprint) = $this->generateSprintsForTask($project);
-
-        $form = $this->createForm(new TaskType($parent_task, $all_tasks, $sprints_numbers, $sprints_dates_text), $task);
+        $form = $this->createForm(new TaskType($parent_task, $all_tasks, $sprints_numbers, $sprints_dates_text, null), $task);
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
@@ -176,10 +185,19 @@ class TaskController extends Controller {
                         $task->setSprint($sprint);
                         $em->persist($sprint);
                     }
+                } elseif ($task->getParent()) {
+                    $sprint = $task->getParent()->getSprint();
+                    $task->setSprint($sprint);
+                    $em->persist($sprint);
                 }
                 $task->setCreatedAt(new \DateTime());
                 $task->setProject($project);
                 $task->setState('Unstarted');
+
+                $log = $this->generateLogForTask($task, 'Created');
+                $task->addLog($log);
+                $em->persist($log);
+
                 $em->persist($task);
                 $em->flush();
                 $task_id = $task->getId();
@@ -200,6 +218,64 @@ class TaskController extends Controller {
                     'users' => $project->getuser()));
     }
 
+    /**
+     * @Route("/project/{project_id}/task/edit/{task_id}/", name="task_edit")
+     */
+    public function editAction($project_id, $task_id) {
+        $em = $this->getDoctrine()->getEntityManager();
+        $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $project_id));
+        $task = $em->getRepository('AppBundle:Task')->findOneBy(array('id' => $task_id));
+
+        $all_tasks = $project->getTask();
+
+        list($sprints_numbers, $sprints_dates, $sprints_dates_text, $current_sprint) = $this->generateSprintsForTask($project);
+
+        $task_sprint_number = array_search($task->getSprint(), $sprints_dates_text);
+
+        $form = $this->createForm(new TaskType(null, $all_tasks, $sprints_numbers, $sprints_dates_text, $task_sprint_number), $task);
+        $request = $this->get('request');
+
+        if ($request->getMethod() == 'POST') {
+            $form->bind($request);
+            if ($form->isValid()) {
+                if ($sprint_number = $form['sprint']->getData()) {
+                    $sprint = $em->getRepository('AppBundle:Sprint')->getProjectSprintByNumber($project_id, $sprint_number);
+                    if (empty($sprint)) {
+                        $sprint = new Sprint();
+                        $sprint->setProject($project)
+                                ->setNumber($sprint_number)
+                                ->setDateStart($sprints_dates[$sprint_number - $current_sprint]['start_date'])
+                                ->setDateEnd($sprints_dates[$sprint_number - $current_sprint]['end_date']);
+                    }
+                    $task->setSprint($sprint);
+                    $em->persist($sprint);
+                }
+
+                $log = $this->generateLogForTask($task, 'Edited');
+                $task->addLog($log);
+                $em->persist($log);
+
+                $em->persist($task);
+                $em->flush();
+                $task_id = $task->getId();
+                if ($form->get('saveAndAdd')->isClicked()) {
+                    return $this->redirectToRoute('task_create_child', array(
+                                'project_id' => $project_id,
+                                'parent_task_id' => $task_id));
+                } else {
+                    return $this->redirectToRoute('task_show', array(
+                                'project_id' => $project_id,
+                                'task_id' => $task_id));
+                }
+            }
+        }
+        return $this->render('task/edit.html.twig', array(
+                    'task' => $task,
+                    'form' => $form->createView(),
+                    'project' => $project,
+                    'users' => $project->getuser()));
+    }
+
     public function getTaskSprint($task) {
         $sprint = $task->getSprint();
         if (!$sprint) {
@@ -207,17 +283,15 @@ class TaskController extends Controller {
         }
         $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
         $formatter->setPattern('d MMMM Y');
-        return $formatter->format($sprint->getStartDate()) . ' — ' . $formatter->format($sprint->getEndDate());
+        return $formatter->format($sprint->getDateStart()) . ' — ' . $formatter->format($sprint->getDateEnd());
     }
 
     public function generateSprintsForTask($project) {
         $sprints_numbers = array();
         $sprints_dates = array();
         $sprints_dates_text = array();
-
         $interval = date_diff((new \DateTime()), $project->getCreatedAt())->days;
         $current_sprint = (int) ceil($interval / $project->getSprintLength());
-
         $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
         $formatter->setPattern('d MMMM Y');
         for ($i = 0; $i < 6; $i++) {
@@ -230,6 +304,14 @@ class TaskController extends Controller {
             $sprints_dates_text[$i] = $formatter->format($start_date) . ' — ' . $formatter->format($end_date);
         }
         return array($sprints_numbers, $sprints_dates, $sprints_dates_text, $current_sprint);
+    }
+
+    public function generateLogForTask($task, $event) {
+        $log = new Log;
+        $log->setTask($task);
+        $log->setUser($this->container->get('security.context')->getToken()->getUser());
+        $log->setEvent($event);
+        return $log;
     }
 
 }

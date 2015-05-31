@@ -20,7 +20,6 @@ class SprintRepository extends EntityRepository {
     }
 
     public function getActualSprintsTasksByProjectId($project_id) {
-
         $date = date('Y-m-d');
 
         $qb = $this->getEntityManager()->createQueryBuilder();
@@ -49,9 +48,11 @@ class SprintRepository extends EntityRepository {
                 ->leftJoin('Sprint.task', 'Task')
                 ->leftJoin('Task.children', 'ChildTask')
                 ->where('Sprint.dateEnd < :now_date')
+                ->andWhere('Task.state != :state')
                 ->andWhere('Sprint.project= :id')
                 ->setParameters(array(
                     'now_date' => $date,
+                    'state' => 'Finished',
                     'id' => $project_id));
         ;
         $query = $qb->getQuery();

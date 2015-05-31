@@ -9,6 +9,7 @@ class AppExtension extends \Twig_Extension {
             new \Twig_SimpleFilter('price', array($this, 'priceFilter')),
             new \Twig_SimpleFilter('subtaskrus', array($this, 'subTaskRusFilter')),
             new \Twig_SimpleFilter('checkchildrenstate', array($this, 'checkChildrenStateFilter')),
+            new \Twig_SimpleFilter('logstaterus', array($this, 'logStateRusFilter')),
         );
     }
 
@@ -29,14 +30,36 @@ class AppExtension extends \Twig_Extension {
         }
         return $string;
     }
-    
+
     public function checkChildrenStateFilter($task) {
         foreach ($task->getChildren() as $child) {
-            if ($child->getState() != 'Finished'){
+            if ($child->getState() != 'Finished') {
                 return false;
             }
         }
         return true;
+    }
+
+    public function logStateRusFilter($state) {
+
+        switch ($state) {
+            case 'Created':
+                $string = 'создал задачу';
+                break;
+            case 'Edited':
+                $string = 'изменил задачу';
+                break;
+            case 'Started':
+                $string = 'начал выполнение задачи';
+                break;
+            case 'Finished':
+                $string = 'закончил задачу';
+                break;
+            case 'Unstarted':
+                $string = 'отказался от задачи';
+                break;
+        }
+        return $string;
     }
 
     public function getName() {

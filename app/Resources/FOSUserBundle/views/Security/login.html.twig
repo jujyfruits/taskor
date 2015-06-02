@@ -1,0 +1,40 @@
+
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <div class="row">
+
+        <div class="col-sm-4 login-form-container">
+
+            <div class="login-form-header">
+                Пожалуйста войдите, или <a href="{{ path('fos_user_registration_register') }}">зарегистрируйтесь</a>
+            </div>
+            <hr class="hr-or">
+            <form action="{{ path('fos_user_security_check') }}" method="POST" class="fos_user_login">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                <div class="form-group">
+                    <label for="inputUsernameEmail">Имя пользователя</label>
+                    <input type="text" id="inputUsernameEmail" name="_username" value="{{ last_username }}" required="required" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <a class="pull-right" href="#">Забыли пароль?</a>
+                    <label for="inputPassword">Пароль</label>
+                    <input type="password" class="form-control" id="inputPassword" name="_password" required="required" />
+                </div>
+                <div class="checkbox pull-right">
+                    <label>
+                        <input type="checkbox">
+                        Запомнить меня </label>
+                </div>
+                <button class="simple-button" type="submit" class="btn btn btn-primary">
+                    Войти
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock fos_user_content %}
+

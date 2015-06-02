@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Статистика проекта {{ project.Name }}
+{% endblock %}
+
+{% block breadcrumps %}
+    <h3>
+        <a href="{{ path('project_show',{'id':project.Id}) }}">{{ project.Name }}</a>
+        &mdash;
+        Статистика проекта
+    </h3>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-8 center-stat-container">
+
+            <div id="first-graph" style="width:100%; height:400px;"></div>
+            <br><hr><br>
+            <div id="second-graph" style="width:100%; height:400px;"></div>
+            <br><hr><br>
+            <div id="third-graph" style="width:100%; height:400px;"></div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#first-graph').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Оценочное время / Итоговое время / Разница'
+                },
+                xAxis: {
+                    categories:{{ arr_tasks_categories|json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+                },
+                yAxis: {
+                    title: {
+                        text: 'Количество часов'
+                    }
+                },
+                series: [
+                    {
+                        name: 'Оценочное время',
+                        data:{{ task_estimated_data|json_encode() }}
+                    }, {
+                        name: 'Итоговое время',
+                        data:{{ task_spended_data|json_encode() }}
+                    }, {
+                        name: 'Разница',
+                        data:{{ task_difference_data|json_encode() }}
+                    }
+                ]
+            });
+            
+            $('#second-graph').highcharts({
+                chart: {
+                    type: 'bar'
+                },
+                title: {
+                    text: 'Занятость пользователей (часов)'
+                },
+                xAxis: {
+                    categories:{{ user_time_names |json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Количество часов'
+                    }
+                },
+                legend: {
+                    reversed: true
+                },
+                plotOptions: {
+                    series: {
+                        stacking: 'normal'
+                    }
+                },
+                series: {{ user_time_data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+            });
+            
+            $('#third-graph').highcharts({
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Просроченные задачи / Актуальные задачи / Решенные задачи'
+                },
+                xAxis: {
+                    categories: {{ act_exp_sprints|json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Отношение количества задач '
+                    }
+                },
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                    shared: true
+                },
+                plotOptions: {
+                    column: {
+                        stacking: 'percent'
+                    }
+                },
+                series: {{ actual_expire_task_data |json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+            });
+        });
+    </script>
+{% endblock %}

@@ -13,13 +13,22 @@
             </a>
         </div>
         <div style="text-align:right;" class="{{ task.getUser ? 'col-xs-5' :'col-xs-3 glyphicon-muted' }}">
-            <span class="glyphicon glyphicon-user task-inline-glyphicons"></span>
             {% if task.getUser %}
-                <span class="glyphicon-related-text">{{task.getUser}}</span>
+                <div>
+                    <span class="glyphicon glyphicon-user task-inline-glyphicons"></span>
+                    <span class="glyphicon-related-text">{{task.getUser}}</span>
+                </div>
+            {% else %}
+                <span class="glyphicon glyphicon-user task-inline-glyphicons"></span>
             {% endif %}
-            <span class="glyphicon glyphicon-time task-inline-glyphicons"></span>
+
             {% if (task.estimatedTime) or (task.spendedTime) %}
-                <span class="glyphicon-related-text">{{ task.estimatedTime? task.estimatedTime~'ч':'–' }} / {{ task.spendedTime? task.spendedTime~'ч':'–' }}</span>
+                <div>
+                    <span class="glyphicon glyphicon-time task-inline-glyphicons"></span>
+                    <span class="glyphicon-related-text">{{ task.estimatedTime? task.estimatedTime~'ч':'–' }} / {{ task.spendedTime? task.spendedTime~'ч':'–' }}</span>
+                </div>
+            {% else %}
+                <span class="glyphicon glyphicon-time task-inline-glyphicons"></span>
             {% endif %}
         </div>
         <div class="clearfix"></div>

@@ -9,10 +9,11 @@
         <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
         <li><a href="{{ path('invite_to_project',{'id':project.id}) }}">Добавить участников</a></li>
         {% endif %}
+    <li><a href="{{ path("project_statistic",{'id':project.id}) }}">Статистика проекта</a></li>
     {% endblock additional_navbar_pills %}
 
 {% block breadcrumps %}
-    <h3>{{ project.Name }}</h3>
+    <h3 style="margin: 5px 0;">{{ project.Name }}</h3>
 {% endblock %}
 
 {% block content %}
@@ -21,10 +22,10 @@
 
         {# ПРОСРОЧЕННЫЕ #}
         <div class="col-md-4 task-group-container-wrapper">
-            <div class="task-group-container">
+            <div class="task-group-container nano">
                 <span class="task-group-header">Просроченные</span>
                 {% for sprint in expired_sprints %}
-                    <div class="task-sprint-container">
+                    <div class="task-sprint-container nano-content">
                         <span class="task-group-header">{{ sprint.getDateStart()|localizeddate('long', 'none', null, null, 'd MMMM') }} &mdash; {{ sprint.getDateEnd()|localizeddate('long', 'none', null, null, 'd MMMM') }}</span> 
                         {% for task in sprint.getTask() %}
                             {% if  (not(task.getParent()) and not(task.getChildren().count)) or ((task.getChildren().count) and not (task.getParent())) %}
@@ -46,10 +47,10 @@
 
         {# БЭКЛОГ #}
         <div class="col-md-4 task-group-container-wrapper">
-            <div class="task-group-container">
+            <div class="task-group-container nano">
                 <span class="task-group-header">Бэклог</span>
                 {% for sprint in actual_sprints %}
-                    <div class="task-sprint-container">
+                    <div class="task-sprint-container nano-content">
                         <span class="task-group-header">{{ sprint.getDateStart()|localizeddate('long', 'none', null, null, 'd MMMM') }} &mdash; {{ sprint.getDateEnd()|localizeddate('long', 'none', null, null, 'd MMMM') }}</span> 
                         {% for task in sprint.getTask() %}
                             {% if  (not(task.getParent()) and not(task.getChildren().count)) or ((task.getChildren().count) and not (task.getParent())) %}
@@ -71,13 +72,13 @@
 
         {# НЕНАЗНАЧЕННЫЕ #}
         <div class="col-md-4 task-group-container-wrapper">
-            <div class="task-group-container">
+            <div class="task-group-container nano">
                 <span class="task-group-header">Неназначенные</span>
-                <div class="task-sprint-container">
+                <div class="task-sprint-container nano-content">
                     {% for task in unassigned_tasks %}
-                            {% if  (not(task.getParent()) and not(task.getChildren().count)) or ((task.getChildren().count) and not (task.getParent())) %}
-                                {{ include('project/tasks/task_list.html.twig', { 'task': task }) }}
-                            {% endif %}
+                        {% if  (not(task.getParent()) and not(task.getChildren().count)) or ((task.getChildren().count) and not (task.getParent())) %}
+                            {{ include('project/tasks/task_list.html.twig', { 'task': task }) }}
+                        {% endif %}
                     {% else %}
                         <div class="no-tasks-container text-center text-muted">
                             Нет доступных задач
@@ -96,8 +97,10 @@
 
     <script>
         $(document).ready(function () {
-        // Modal form handler
-        $('#modal-container').on("click", '.modal-button-change-state', function () {
+
+        $(".nano").nanoScroller();
+                // Modal form handler
+                $('#modal-container').on("click", '.modal-button-change-state', function () {
         var new_state = $(this).attr("value");
                 var task_id = $(this).attr("data-id");
                 $('form').on('submit', [new_state, task_id], function (e) {

@@ -33,19 +33,38 @@ body{
     font-family: arial , Helvetica ,sans-serif;
 }
 
+.usual-container{
+    margin-right: auto;
+    margin-left: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 @media (min-width: 768px) {
     .container {
         width: 100%;
+    }
+
+    .usual-container{
+        width: 750px;
     }
 }
 @media (min-width: 992px) {
     .container {
         width: 100%;
     }
+
+    .usual-container{
+        width: 970px;
+    }
 }
 @media (min-width: 1200px) {
     .container {
         width: 100%;
+    }
+
+    .usual-container{
+        width: 1170px;
     }
 }
 
@@ -122,9 +141,7 @@ h3{
 
 .task-group-container{
 
-    height: 100vh;
-    max-height: 100vh;
-    //overflow-y: scroll;
+    height: 70vh;
     background: repeating-linear-gradient(
         -55deg,
         #444,
@@ -172,7 +189,7 @@ a#archive-project{
 }
 
 .child-tasks-container > .task-container{
-   // padding: 0px 0px 0px 5px ;
+    // padding: 0px 0px 0px 5px ;
 }
 
 .task-container{
@@ -544,4 +561,38 @@ table.full-task-view tr td:first-child{
 
 .full-task-subtask-container .full-task-button-container{
     width: 100%;
+}
+
+.login-form-header{
+    font-size: 18px;
+    text-align: center;
+    padding: 5px 20px;
+    margin: -8px -8px;
+    border-color: #45474B !important;
+    background: none repeat scroll 0% 0% #4C4F53;
+    color: white;
+}
+
+.well.small-well-task{
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.center-stat-container{
+    float: none;
+    margin: 0 auto;
+    padding: 8px;
+}
+
+.login-form-container{
+    float: none;
+    margin: 0 auto;
+    border:1px solid #45474B; 
+    padding: 8px;
+}
+
+.confirmed-form-container{
+    float: none;
+    margin: 0 auto;
+    text-align: center;
 }

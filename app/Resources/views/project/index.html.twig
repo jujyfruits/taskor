@@ -48,12 +48,12 @@
                                 {% if loop.first %} 
                                     <div class="text-center"><h5>Проект {{ proj.getName }}</h5></div>
                                 {% endif %}
-                                <div class="well">
+                                <div class="well small-well-task">
                                     <span style="font-size:13px;" class="glyphicon glyphicon-user task-inline-glyphicons"></span>
                                     <strong>{{ event.getUser.getUsername }}</strong>
                                     {{ event.getEvent | logstaterus}}
                                     <a href="{{ path('task_show',{'project_id':event.getTask.getProject.getId,'task_id':event.getTask.getId}) }}">
-                                        {{ event.getTask.getName|length > 20 ? event.getTask.getName[:20]~'...' : event.getTask.getName}}
+                                        {{ event.getTask.getName|length > 17 ? event.getTask.getName[:17]~'...' : event.getTask.getName}}
                                     </a>
                                     {{ event.getDate | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }} 
                                 </div>

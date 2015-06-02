@@ -12,13 +12,33 @@ class LogRepository extends EntityRepository {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $qb
-                ->select('Project','Log', 'Task' )
+                ->select('Project', 'Log', 'Task')
                 ->from('AppBundle\Entity\Log', 'Log')
                 ->leftJoin('Log.task', 'Task')
                 ->leftJoin('Task.project', 'Project')
                 ->where('Project.id IN (:projects)')
                 ->setParameter('projects', $projects)
-                ->setMaxResults(20)
+                ->setMaxResults(12)
+        ;
+
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
+    public function getTaskLatestEventsByProjects($project_id, $task_id) {
+
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb
+                ->select('Log', 'Task')
+                ->from('AppBundle\Entity\Log', 'Log')
+                ->leftJoin('Log.task', 'Task')
+                ->where('Task.project = :project')
+                ->andWhere('Task.id = :task')
+                ->setParameter('project', $project_id)
+                ->setParameter('task', $task_id)
+                ->setMaxResults(10)
         ;
 
         $query = $qb->getQuery();

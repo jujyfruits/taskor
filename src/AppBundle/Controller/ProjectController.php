@@ -138,6 +138,181 @@ class ProjectController extends Controller {
     }
 
     /**
+     * @Route("/project/{id}/statistics", requirements={"id" = "\d+"}, name="project_statistic")
+     */
+    public function statisticsAction($id) {
+        $em = $this->getDoctrine()->getEntityManager();
+
+        $project = $em->getRepository('AppBundle:Project')->find($id);
+
+        if (!$project) {
+            throw $this->createNotFoundException('Unable to find requested project.');
+        }
+
+        $stat_task_est_spend = $em->getRepository('AppBundle:Task')->getStatTasksTimeByProjectId($id);
+
+
+        /**/
+        $task_estimated_data = array();
+        $task_spended_data = array();
+        $task_difference_data = array();
+        $arr_tasks_categories = array();
+
+        foreach ($stat_task_est_spend as $task) {
+            array_push($arr_tasks_categories, $task->getName());
+            array_push($task_estimated_data, $task->getEstimatedTime());
+            array_push($task_spended_data, $task->getSpendedTime());
+            array_push($task_difference_data, $task->getSpendedTime() - $task->getEstimatedTime());
+        }
+        /**/
+
+        /**********************************************************************/
+        $users_busyness = $em->getRepository('AppBundle:User')->getUsersBusynessByProjectId($id);
+
+        foreach ($users_busyness as $key => $row) {
+            if ($row['sprint_id'] == null) {
+                $users_busyness[$key]['sprint_id'] = 'Unassigned';
+            }
+        }
+
+        $arr_data = array();
+        $arr_sprints = ['Неназначенные'];
+        $us_list = array();
+
+        foreach ($users_busyness as $key => $row) {
+            if (!array_key_exists($row['username'], $arr_data)) {
+                $arr_data[$row['username']] = array();
+            }
+            if ($row['sprint_id'] == 'Unassigned') {
+                array_push($arr_data[$row['username']], (int) $row['estimtime']);
+            } else {
+                if (!in_array($row['username'], $us_list)) {
+                    array_push($arr_data[$row['username']], 0);
+                    array_push($us_list, $row['username']);
+                }
+            }
+        }
+        $us_list = array();
+        foreach ($project->getSprint() as $sprint) {
+            array_push($arr_sprints, (string) $sprint);
+            foreach ($users_busyness as $key => $row) {
+                if ($row['sprint_id'] == $sprint->getId()) {
+                    array_push($arr_data[$row['username']], (int) $row['estimtime']);
+                    if (!in_array($row['username'], $us_list)) {
+                        unset($users_busyness[$key]);
+                        array_push($us_list, $row['username']);
+                    }
+                } else {
+                    array_push($arr_data[$row['username']], 0);
+                }
+            }
+        }
+
+        $user_time_data = array();
+        for ($i = 0; $i < count($arr_sprints); $i++) {
+            $user_time_data[$i]['name'] = $arr_sprints[$i];
+
+            if (!array_key_exists('data', $user_time_data[$i])) {
+                $user_time_data[$i]['data'] = array();
+            }
+            foreach ($arr_data as $user) {
+                if (isset($user[$i])) {
+                    array_push($user_time_data[$i]['data'], $user[$i]);
+                } else {
+
+                    array_push($user_time_data[$i]['data'], 0);
+                }
+            }
+        }
+        $user_time_names = array();
+
+        foreach ($arr_data as $key => $user) {
+            array_push($user_time_names, $key);
+        }
+        /**********************************************************************/
+
+        //$exp_done = $em->getRepository('AppBundle:Task')->getStatTasksExpiredByProjectId($id);
+        //dump($exp_done);
+
+        /**********************************************************************/
+
+        $actual_tasks = $em->getRepository('AppBundle:Sprint')->getActualSprintsTasksByProjectId($id);
+        $expired_tasks = $em->getRepository('AppBundle:Sprint')->getExpiredSprintsTasksByProjectId($id);
+        $done_tasks = $em->getRepository('AppBundle:Sprint')->getSprintsDoneTasksByProjectId($id);
+
+        $act_task_data = array();
+        $exp_task_data = array();
+        $act_exp_sprints = array();
+
+
+        $act_exp_task_data['expired'] = array();
+        foreach ($project->getSprint() as $sprint) {
+            array_push($act_exp_sprints, (string) $sprint);
+            foreach ($actual_tasks as $actual_sprint) {
+                if ($actual_sprint->getId() == $sprint->getId()) {
+                    array_push($act_exp_task_data['expired'], count($actual_sprint->getTask()));
+                    unset($actual_sprint);
+                } else {
+                    array_push($act_exp_task_data['expired'], 0);
+                }
+            }
+        }
+
+        $act_exp_task_data['actual'] = array();
+        foreach ($project->getSprint() as $sprint) {
+            foreach ($expired_tasks as $actual_sprint) {
+                if ($actual_sprint->getId() == $sprint->getId()) {
+                    array_push($act_exp_task_data['actual'], count($actual_sprint->getTask()));
+                    unset($actual_sprint);
+                } else {
+                    array_push($act_exp_task_data['actual'], 0);
+                }
+            }
+        }
+
+        $act_exp_task_data['done'] = array();
+        foreach ($project->getSprint() as $sprint) {
+            foreach ($done_tasks as $key => $row) {
+                if ($row['sprint_id'] == $sprint->getId()) {
+                    array_push($act_exp_task_data['done'],(int) $row['count_tasks']);
+                    unset($done_tasks[$key]);
+                } else {
+                    array_push($act_exp_task_data['done'], 0);
+                }
+            }
+        }
+
+        $actual_expire_task_data[0] = [
+            'name' => 'Просроченные',
+            'data' => $act_exp_task_data['expired']
+        ];
+
+        $actual_expire_task_data[1] = [
+            'name' => 'Актуальные',
+            'data' => $act_exp_task_data['actual']
+        ];
+
+        $actual_expire_task_data[2] = [
+            'name' => 'Завершенные',
+            'data' => $act_exp_task_data['done']
+        ];
+        /**********************************************************************/
+        
+        
+        return $this->render('project/statistics.html.twig', array(
+                    'project' => $project,
+                    'arr_tasks_categories' => $arr_tasks_categories,
+                    'task_estimated_data' => $task_estimated_data,
+                    'task_spended_data' => $task_spended_data,
+                    'task_difference_data' => $task_difference_data,
+                    'user_time_data' => $user_time_data,
+                    'user_time_names' => $user_time_names,
+                    'actual_expire_task_data' => $actual_expire_task_data,
+                    'act_exp_sprints' => $act_exp_sprints,
+        ));
+    }
+
+    /**
      * @Route("/project/{id}/edit", requirements={"id" = "\d+"}, name="project_edit")
      */
     public function editAction($id) {

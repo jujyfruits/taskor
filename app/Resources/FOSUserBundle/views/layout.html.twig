@@ -1,7 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap.css') }}" />
+    <link rel="stylesheet" href="{{ asset('bundles/app/css/custom.css') }}" />
 
-{% block title %}Acme Demo Application{% endblock %}
-
-{% block content %}
-    {% block fos_user_content %}{% endblock %}
+    <br>
+    <div class="usual-container">
+        {% block content %}
+        {% block fos_user_content %}{% endblock %}
+    </div>
 {% endblock %}
+</html>

@@ -1,46 +1,73 @@
 <div class="task-full-container">
-    <table class="full-task-view">
-        <tr>
-            <td>Название:</td>
-            {% if path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) == path('task_show',{'project_id':project.id,'task_id':task.id}) %}
-                <td>{{  task.Name }}</td>
-            {% else %}
-                <td><a href='{{path('task_show',{'project_id':project.id,'task_id':task.id})}}'>{{  task.Name }}</a></td>
+
+    {% set this_page = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) == path('task_show',{'project_id':project.id,'task_id':task.id}) %}
+    {% if  this_page %}         
+        <div class="row">
+            <div class="col-sm-7">
+
             {% endif %}
-        </tr>
-        <tr>
-            <td>Дата создания:</td>
-            <td>{{  task.CreatedAt | localizeddate('long', 'none', 'd MMMM') }}</td>
-        </tr>
-        {% if not (task.getChildren().count) %}
-            <tr>
-                <td>Участник:</td>
-                <td>{{  task.getuser }}</td>
-            </tr>
-        {% endif %}
-        <tr>
-            <td>Описание:</td>
-            <td>{{  task.Description }}</td>
-        </tr>
-        <tr>
-            <td>Текущее состояние:</td>
-            <td>{{  task.State }}</td>
-        </tr>
-        <tr>
-            <td>Установленный спринт:</td>
-            <td>{{  sprint }}</td>
-        </tr>
-        {% if not (task.getChildren().count) %}
-            <tr>
-                <td>Предполагаемое время выполнения:</td>
-                <td>{{  task.EstimatedTime ? task.EstimatedTime~' часов' : ''}}</td>
-            </tr>
-            <tr>
-                <td>Итоговое время выполнения:</td>
-                <td>{{  task.SpendedTime ? task.SpendedTime~' часов' : ''}}</td>
-            </tr>
-        {% endif %}
-    </table>
+
+            <table class="full-task-view">
+                <tr>
+                    <td>Название:</td>
+                    {% if path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) == path('task_show',{'project_id':project.id,'task_id':task.id}) %}
+                        <td>{{  task.Name }}</td>
+                    {% else %}
+                        <td><a href='{{path('task_show',{'project_id':project.id,'task_id':task.id})}}'>{{  task.Name }}</a></td>
+                        {% endif %}
+                </tr>
+                <tr>
+                    <td>Дата создания:</td>
+                    <td>{{  task.CreatedAt | localizeddate('long', 'none', 'd MMMM') }}</td>
+                </tr>
+                {% if not (task.getChildren().count) %}
+                    <tr>
+                        <td>Участник:</td>
+                        <td>{{  task.getuser }}</td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>Описание:</td>
+                    <td>{{  task.Description }}</td>
+                </tr>
+                <tr>
+                    <td>Текущее состояние:</td>
+                    <td>{{  task.State }}</td>
+                </tr>
+                <tr>
+                    <td>Установленный спринт:</td>
+                    <td>{{  sprint }}</td>
+                </tr>
+                {% if not (task.getChildren().count) %}
+                    <tr>
+                        <td>Предполагаемое время выполнения:</td>
+                        <td>{{  task.EstimatedTime ? task.EstimatedTime~' часов' : ''}}</td>
+                    </tr>
+                    <tr>
+                        <td>Итоговое время выполнения:</td>
+                        <td>{{  task.SpendedTime ? task.SpendedTime~' часов' : ''}}</td>
+                    </tr>
+                {% endif %}
+            </table>
+
+            {% if  this_page %}         
+            </div>
+            <div class="col-sm-5">
+                <div class="">
+                    {% for event in events %}
+                        <div class="well small-well-task">
+                            <span style="font-size:13px;" class="glyphicon glyphicon-user task-inline-glyphicons"></span>
+                            <strong>{{ event.getUser.getUsername }}</strong>
+                            {{ event.getEvent | logstaterus}}
+                            {{ event.getDate | localizeddate('long', 'none', null, null, 'd MMMM Y H:mm') }} 
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>  
+        </div>
+    {% endif %}
+
 
     <div class="row">
         <div class="full-task-button-container col-sm-offset-1 col-sm-4">
@@ -55,7 +82,7 @@
             {% else %}
                 <div style='width: 200px'><strong>{{task.getChildren().count}} 
                         {{ task.getChildren().count|subtaskrus }}</strong></div>
-            {% endif %}
+                    {% endif %}
         </div>
     </div>
 </div>

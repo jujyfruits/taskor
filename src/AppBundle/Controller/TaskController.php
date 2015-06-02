@@ -56,7 +56,6 @@ class TaskController extends Controller {
             return;
         }
 
-
         $log = $this->generateLogForTask($task, $task->getState());
         $task->addLog($log);
         $em->persist($log);
@@ -137,7 +136,8 @@ class TaskController extends Controller {
                 array_push($task_parents, $parent);
             }
         }
-
+        $events = $em->getRepository('AppBundle:Log')->getTaskLatestEventsByProjects($project_id, $task_id);
+        dump($events);
         $user = $this->container->get('security.context')->getToken()->getUser();
 
         return $this->render('task/show.html.twig', array(
@@ -146,7 +146,9 @@ class TaskController extends Controller {
                     'task' => $task,
                     'child_tasks' => $task->getChildren(),
                     'task_parents' => $task_parents,
-                    'sprint' => $task->getSprint() ? : 'Неназначено'
+                    'user' => $user,
+                    'sprint' => $task->getSprint() ? : 'Неназначено',
+                    'events' => $events
         ));
     }
 
@@ -182,9 +184,9 @@ class TaskController extends Controller {
                                 ->setNumber($sprint_number)
                                 ->setDateStart($sprints_dates[$sprint_number - $current_sprint]['start_date'])
                                 ->setDateEnd($sprints_dates[$sprint_number - $current_sprint]['end_date']);
-                        $task->setSprint($sprint);
-                        $em->persist($sprint);
                     }
+                    $task->setSprint($sprint);
+                    $em->persist($sprint);
                 } elseif ($task->getParent()) {
                     $sprint = $task->getParent()->getSprint();
                     $task->setSprint($sprint);

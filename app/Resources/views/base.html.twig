@@ -6,6 +6,8 @@
     {% block head %}
         <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap.css') }}" />
 
+        <link rel="stylesheet" href="{{ asset('bundles/app/css/nanoscroller.css')}}" />
+
         <link rel="stylesheet" href="{{ asset('bundles/app/css/custom.css')}}" />
 
         {% block javascripts %} 
@@ -16,6 +18,12 @@
             <script type="text/javascript" src="{{ asset_url }}"></script>
             {% endjavascripts %}
             {% javascripts '@AppBundle/Resources/public/js/jquery.validate.min.js' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+            {% javascripts '@AppBundle/Resources/public/js/jquery.nanoscroller.min.js' %}
+            <script type="text/javascript" src="{{ asset_url }}"></script>
+            {% endjavascripts %}
+            {% javascripts '@AppBundle/Resources/public/js/highcharts.js' %}
             <script type="text/javascript" src="{{ asset_url }}"></script>
             {% endjavascripts %}
         {% endblock javascripts %}
@@ -54,6 +62,7 @@
                     </div>
                 {% endblock %}
 
+                {#
                 <div class="container">
                     {% if is_granted('ROLE_USER') %}
                         ROLE_USER
@@ -65,7 +74,8 @@
                         ROLE_SUPER_ADMIN
                     {% endif %}
                 </div>
-
+                #}
+                
                 <div class="container">
 
                     <div class="breadcrumps-container">

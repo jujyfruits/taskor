@@ -58,5 +58,22 @@ class SprintRepository extends EntityRepository {
         $query = $qb->getQuery();
         return $query->getResult();
     }
+    
+    public function getSprintsDoneTasksByProjectId($project_id) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+                ->select('count(Task.id) as count_tasks','Sprint.id as sprint_id')
+                ->from('AppBundle\Entity\Sprint', 'Sprint')
+                ->leftJoin('Sprint.task', 'Task')
+                ->Where('Sprint.project= :id')
+                ->andWhere('Task.state = :state')
+                ->setParameters(array(
+                    'state' => 'Finished',
+                    'id' => $project_id))
+                ->groupBy('Sprint');
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
 
 }

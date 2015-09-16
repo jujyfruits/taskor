@@ -17,6 +17,7 @@ class LogRepository extends EntityRepository {
                 ->leftJoin('Log.task', 'Task')
                 ->leftJoin('Task.project', 'Project')
                 ->where('Project.id IN (:projects)')
+                ->orderBy('Log.date', 'DESC')
                 ->setParameter('projects', $projects)
                 ->setMaxResults(12)
         ;

@@ -54,6 +54,7 @@
             </div>
             <div class="col-sm-5">
                 <div class="">
+                    <div class="full-task-subtask-element-header text-center">История изменений</div>
                     {% for event in events %}
                         <div class="well small-well-task">
                             <span style="font-size:13px;" class="glyphicon glyphicon-user task-inline-glyphicons"></span>
@@ -70,7 +71,7 @@
 
 
     <div class="row">
-        <div class="full-task-button-container col-sm-offset-1 col-sm-4">
+        <div class="{{ this_page ? 'owner-button-container' : 'col-sm-offset-1 ' }}  full-task-button-container col-sm-4">
             <input id type="hidden" value="{{ task.name }}">
             {% if not (task.getChildren().count) %}
                 {% if task.state  == 'Started'  and task.getUser == user %}

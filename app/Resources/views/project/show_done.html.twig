@@ -9,18 +9,21 @@
         <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
         <li><a href="{{ path('invite_to_project',{'id':project.id}) }}">Добавить участников</a></li>
         {% endif %}
-
-{% endblock additional_navbar_pills %}
+    <li><a href="{{ path("project_statistic",{'id':project.id}) }}">Статистика проекта</a></li>
+    {% endblock additional_navbar_pills %}
 
 {% block breadcrumps %}
     <div class="row">
         <div class="col-sm-6">
-            <h3 style="margin: 5px 0;">{{ project.Name }}</h3>
+            <h3 style="margin: 5px 0;"><a href="{{path('project_show',{'id':project.id})}}">{{ project.Name }}</a>
+                &mdash;
+                Выполненные задачи
+            </h3>
         </div>
         <div class="col-sm-6">
             <ul class="pull-right project-nav-bar">
                 <li><a class="finish-button" href="{{ path("project_statistic",{'id':project.id}) }}">Статистика проекта</a></li>
-                <li><a class="success-button" href="{{ path("project_show_done",{'id':project.id}) }}">Выполненные задачи</a></li>
+                <li><a class="simple-button" href="{{ path("project_show",{'id':project.id}) }}">Актуальные задачи</a></li>
             </ul>
         </div>
     </div>
@@ -30,12 +33,12 @@
 
     <div class="row dashboard-tasks-container">
 
-        {# ПРОСРОЧЕННЫЕ #}
+        {# ПРОСРОЧЕННЫЙ БЭКЛОГ #}
         <div class="col-md-4 task-group-container-wrapper">
             <div class="task-group-container nano">
-                <span class="task-group-header">Просроченные</span>
+                <span class="task-group-header">Неактуальные спринты</span>
                 <div class="nano-content">
-                    {% for sprint in expired_sprints %}
+                    {% for sprint in expired_sprint_done_tasks %}
                         <div class="task-sprint-container">
                             <span class="task-sprint-header">{{ sprint.getDateStart()|localizeddate('long', 'none', null, null, 'd MMMM') }} &mdash; {{ sprint.getDateEnd()|localizeddate('long', 'none', null, null, 'd MMMM') }}</span> 
                             {% for task in sprint.getTask() %}
@@ -60,9 +63,9 @@
         {# БЭКЛОГ #}
         <div class="col-md-4 task-group-container-wrapper">
             <div class="task-group-container nano">
-                <span class="task-group-header">Бэклог</span>
+                <span class="task-group-header">Актуальные спринты</span>
                 <div class="nano-content">
-                    {% for sprint in actual_sprints %}
+                    {% for sprint in actual_sprint_done_tasks %}
                         <div class="task-sprint-container">
                             <span class="task-sprint-header">{{ sprint.getDateStart()|localizeddate('long', 'none', null, null, 'd MMMM') }} &mdash; {{ sprint.getDateEnd()|localizeddate('long', 'none', null, null, 'd MMMM') }}</span> 
                             {% for task in sprint.getTask() %}
@@ -87,17 +90,19 @@
         {# НЕНАЗНАЧЕННЫЕ #}
         <div class="col-md-4 task-group-container-wrapper">
             <div class="task-group-container nano">
-                <span class="task-group-header">Неназначенные</span>
-                <div class="task-sprint-container nano-content">
-                    {% for task in unassigned_tasks %}
-                        {% if  (not(task.getParent()) and not(task.getChildren().count)) or ((task.getChildren().count) and not (task.getParent())) %}
-                            {{ include('project/tasks/task_list.html.twig', { 'task': task }) }}
-                        {% endif %}
-                    {% else %}
-                        <div class="no-tasks-container text-center text-muted">
-                            Нет доступных задач
-                        </div>
-                    {% endfor %}
+                <span class="task-group-header">Неназначенные задачи</span>
+                <div class="nano-content">
+                    <div class="task-sprint-container">
+                        {% for task in unassigned_done_tasks %}
+                            {% if  (not(task.getParent()) and not(task.getChildren().count)) or ((task.getChildren().count) and not (task.getParent())) %}
+                                {{ include('project/tasks/task_list.html.twig', { 'task': task }) }}
+                            {% endif %}
+                        {% else %}
+                            <div class="no-tasks-container text-center text-muted">
+                                Нет доступных задач
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

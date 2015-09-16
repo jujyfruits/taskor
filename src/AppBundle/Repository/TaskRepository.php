@@ -22,14 +22,36 @@ class TaskRepository extends EntityRepository {
                 ->from('AppBundle\Entity\Task', 'Task')
                 ->leftJoin('Task.children', 'ChildTask')
                 ->where('Task.sprint IS NULL')
+                ->andWhere('Task.state <> :state')
                 ->andWhere('Task.project = :id')
                 ->setParameter('id', $project_id)
+                ->setParameter('state', 'Finished')
         ;
 
         $query = $qb->getQuery();
         return $query->getResult();
     }
+    
+    
+    public function getUnassignedDoneTasksByProjectId($project_id) {
 
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb
+                ->select('Task', 'ChildTask')
+                ->from('AppBundle\Entity\Task', 'Task')
+                ->leftJoin('Task.children', 'ChildTask')
+                ->where('Task.sprint IS NULL')
+                ->andWhere('Task.state = :state')
+                ->andWhere('Task.project = :id')
+                ->setParameter('id', $project_id)
+                ->setParameter('state', 'Finished')
+        ;
+
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+    
     public function getStatTasksTimeByProjectId($project_id) {
 
         $qb = $this->getEntityManager()->createQueryBuilder();

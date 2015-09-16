@@ -141,7 +141,7 @@ h3{
 
 .task-group-container{
 
-    height: 70vh;
+    height: 75vh;
     background: repeating-linear-gradient(
         -55deg,
         #444,
@@ -176,6 +176,19 @@ a#archive-project{
     background: -o-linear-gradient(top, rgba(148,148,148,1) 0%, rgba(61,61,61,1) 53%, rgba(51,51,51,1) 100%);
     background: -ms-linear-gradient(top, rgba(148,148,148,1) 0%, rgba(61,61,61,1) 53%, rgba(51,51,51,1) 100%);
     background: linear-gradient(to bottom, rgba(148,148,148,1) 0%, rgba(61,61,61,1) 53%, rgba(51,51,51,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#949494', endColorstr='#333333', GradientType=0 );
+}
+
+.task-sprint-header{
+    padding: 0 7px 2px 7px;
+    color: #fff;
+    display: block;
+    font-size: 15px;
+    text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+    color: #FFFFFF;
+    background: rgba(148,148,148,1);
+
+    background: linear-gradient(to bottom, #BEBEBE 0%, #868686 53%, #868686 100%) repeat scroll 0% 0% transparent;
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#949494', endColorstr='#333333', GradientType=0 );
 }
 
@@ -563,6 +576,14 @@ table.full-task-view tr td:first-child{
     width: 100%;
 }
 
+.full-task-subtask-container .task-full-container-wrapper{
+box-shadow: 0px 6px 12px -2px rgba(0, 0, 0, 0.92);
+}
+
+.owner-button-container.full-task-button-container{
+   margin-left: 2.5em;
+}
+
 .login-form-header{
     font-size: 18px;
     text-align: center;
@@ -595,4 +616,24 @@ table.full-task-view tr td:first-child{
     float: none;
     margin: 0 auto;
     text-align: center;
+}
+
+ul.project-nav-bar {
+    list-style: none;
+    margin: 0;
+}
+
+ul.project-nav-bar>li {
+    display: inline-block;
+
+}
+
+ul.project-nav-bar>li>a {
+    padding:6px
+}
+
+ul.project-nav-bar>li>a:hover,
+ul.project-nav-bar>li>a:focus {
+    text-decoration: none;
+    outline: none;
 }

@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 
 /**
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TaskRepository")
@@ -333,23 +334,6 @@ class Task {
     }
 
     /**
-     * @ORM\PreFlush
-     */
-    public function setParentState() {
-
-        if (!$this->getParent() || $this->getState() != 'Finished') {
-            return null;
-        }
-
-        foreach ($this->getParent()->getChildren() as $anotherChild) {
-            if ($anotherChild->getState() != 'Finished') {
-                return null;
-            }
-        }
-        $this->getParent()->setState('Finished');
-    }
-
-    /**
      * Add log
      *
      * @param \AppBundle\Entity\Log $log
@@ -377,6 +361,37 @@ class Task {
      */
     public function getLog() {
         return $this->log;
+    }
+
+    /**
+     * @ORM\PreFlush
+     */
+    public function setParentState(PreFlushEventArgs $args) {
+
+        $em = $args->getEntityManager();
+
+        if (!$this->getParent() || $this->getState() != 'Finished') {
+            return null;
+        }
+
+        $parent = $this->getParent();
+
+        while ($parent) {
+            foreach ($parent->getChildren() as $anotherChild) {
+                if ($anotherChild->getState() != 'Finished') {
+                    break 2;
+                }
+            }
+            $parent->setState('Finished');
+
+            $em->persist($parent);
+
+            if ($parent->getParent() !== null) {
+                $parent = $parent->getParent();
+            } else {
+                break;
+            }
+        }
     }
 
 }

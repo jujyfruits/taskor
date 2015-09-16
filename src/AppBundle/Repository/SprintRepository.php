@@ -59,7 +59,7 @@ class SprintRepository extends EntityRepository {
         return $query->getResult();
     }
     
-    public function getSprintsDoneTasksByProjectId($project_id) {
+    public function getStatSprintsDoneTasksByProjectId($project_id) {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
                 ->select('count(Task.id) as count_tasks','Sprint.id as sprint_id')
@@ -71,6 +71,48 @@ class SprintRepository extends EntityRepository {
                     'state' => 'Finished',
                     'id' => $project_id))
                 ->groupBy('Sprint');
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+    
+    public function getExpiredSprintsDoneTasksByProjectId($project_id) {
+        $date = date('Y-m-d');
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+                ->select('Sprint', 'Task', 'ChildTask')
+                ->from('AppBundle\Entity\Sprint', 'Sprint')
+                ->leftJoin('Sprint.task', 'Task')
+                ->leftJoin('Task.children', 'ChildTask')
+                ->where('Task.state = :state')
+                ->andWhere('Sprint.dateEnd < :now_date')
+                ->andWhere('Sprint.project= :id')
+                ->setParameters(array(
+                    'now_date' => $date,
+                    'state' => 'Finished',
+                    'id' => $project_id));
+        ;
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+    
+    public function getActualSprintsDoneTasksByProjectId($project_id) {
+        $date = date('Y-m-d');
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+                ->select('Sprint', 'Task', 'ChildTask')
+                ->from('AppBundle\Entity\Sprint', 'Sprint')
+                ->leftJoin('Sprint.task', 'Task')
+                ->leftJoin('Task.children', 'ChildTask')
+                ->where('Task.state = :state')
+                ->andWhere('Sprint.dateEnd >= :now_date')
+                ->andWhere('Sprint.project= :id')
+                ->setParameters(array(
+                    'now_date' => $date,
+                    'state' => 'Finished',
+                    'id' => $project_id));
         ;
         $query = $qb->getQuery();
         return $query->getResult();

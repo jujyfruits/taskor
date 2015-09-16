@@ -64,27 +64,29 @@
             </div>
         </div>
 
-        <div class="row">
-            {% if is_granted('ROLE_MANAGER') %}
-                <div class="col-xs-12">
-                    <h3>Все проекты</h3>
-                    <div class="row">
-                        {% for project in projects %}
-                            <div class="col-md-6">
-                                <div class="well">
-                                    <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
-                                    <div class="">{{ project.archived ? 'Архивирован' : '' }}</div>
-                                    <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
-                                    <p>{{ project.Description }}</p>
-                                </div>
-                            </div>
-                        {% else %}
-                            Здесь будут отображаться все проекты.
-                        {% endfor %}
+        {#
+<div class="row">
+    {% if is_granted('ROLE_MANAGER') %}
+        <div class="col-xs-12">
+            <h3>Все проекты</h3>
+            <div class="row">
+                {% for project in projects %}
+                    <div class="col-md-6">
+                        <div class="well">
+                            <a href="{{ path('project_show',{'id':project.id}) }}">{{ project.Name }}</a>
+                            <div class="">{{ project.archived ? 'Архивирован' : '' }}</div>
+                            <span class="text-muted">{{ project.CreatedAt |date("jS F Y \\a\\t H:i") }}</span>
+                            <p>{{ project.Description }}</p>
+                        </div>
                     </div>
-                </div>
+                {% else %}
+                    Здесь будут отображаться все проекты.
+                {% endfor %}
             </div>
-        {% endif %}
+        </div>
+    </div>
+{% endif %}
+#}
 
     </div>
 </div>

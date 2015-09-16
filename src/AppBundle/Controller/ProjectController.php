@@ -138,6 +138,28 @@ class ProjectController extends Controller {
     }
 
     /**
+     * @Route("/project/{id}/done", requirements={"id" = "\d+"}, name="project_show_done")
+     */
+    public function showDoneAction($id) {
+        $em = $this->getDoctrine()->getEntityManager();
+        $project = $em->getRepository('AppBundle:Project')->find($id);
+        if (!$project) {
+            throw $this->createNotFoundException('Unable to find requested project.');
+        }
+        $expired_sprint_done_tasks = $em->getRepository('AppBundle:Sprint')->getExpiredSprintsDoneTasksByProjectId($id);
+        $actual_sprint_done_tasks = $em->getRepository('AppBundle:Sprint')->getActualSprintsDoneTasksByProjectId($id);
+        $unassigned_done_tasks = $em->getRepository('AppBundle:Task')->getUnassignedDoneTasksByProjectId($id);
+        $user = $this->container->get('security.context')->getToken()->getUser()->getUserName();
+        return $this->render('project/show_done.html.twig', array(
+                    'project' => $project,
+                    'unassigned_done_tasks' => $unassigned_done_tasks,
+                    'expired_sprint_done_tasks' => $expired_sprint_done_tasks,
+                    'actual_sprint_done_tasks' => $actual_sprint_done_tasks,
+                    'user' => $user
+        ));
+    }
+
+    /**
      * @Route("/project/{id}/statistics", requirements={"id" = "\d+"}, name="project_statistic")
      */
     public function statisticsAction($id) {
@@ -152,7 +174,7 @@ class ProjectController extends Controller {
         $stat_task_est_spend = $em->getRepository('AppBundle:Task')->getStatTasksTimeByProjectId($id);
 
 
-        /**/
+        /*         * ******************************************************************* */
         $task_estimated_data = array();
         $task_spended_data = array();
         $task_difference_data = array();
@@ -164,9 +186,9 @@ class ProjectController extends Controller {
             array_push($task_spended_data, $task->getSpendedTime());
             array_push($task_difference_data, $task->getSpendedTime() - $task->getEstimatedTime());
         }
-        /**/
+        /*         * ******************************************************************* */
 
-        /**********************************************************************/
+        /*         * ******************************************************************* */
         $users_busyness = $em->getRepository('AppBundle:User')->getUsersBusynessByProjectId($id);
 
         foreach ($users_busyness as $key => $row) {
@@ -229,22 +251,22 @@ class ProjectController extends Controller {
         foreach ($arr_data as $key => $user) {
             array_push($user_time_names, $key);
         }
-        /**********************************************************************/
+        /*         * ******************************************************************* */
 
         //$exp_done = $em->getRepository('AppBundle:Task')->getStatTasksExpiredByProjectId($id);
         //dump($exp_done);
 
-        /**********************************************************************/
+        /*         * ******************************************************************* */
 
         $actual_tasks = $em->getRepository('AppBundle:Sprint')->getActualSprintsTasksByProjectId($id);
         $expired_tasks = $em->getRepository('AppBundle:Sprint')->getExpiredSprintsTasksByProjectId($id);
-        $done_tasks = $em->getRepository('AppBundle:Sprint')->getSprintsDoneTasksByProjectId($id);
+        $done_tasks = $em->getRepository('AppBundle:Sprint')->getStatSprintsDoneTasksByProjectId($id);
 
         $act_task_data = array();
         $exp_task_data = array();
         $act_exp_sprints = array();
 
-
+        
         $act_exp_task_data['expired'] = array();
         foreach ($project->getSprint() as $sprint) {
             array_push($act_exp_sprints, (string) $sprint);
@@ -270,17 +292,19 @@ class ProjectController extends Controller {
             }
         }
 
+
         $act_exp_task_data['done'] = array();
         foreach ($project->getSprint() as $sprint) {
             foreach ($done_tasks as $key => $row) {
                 if ($row['sprint_id'] == $sprint->getId()) {
-                    array_push($act_exp_task_data['done'],(int) $row['count_tasks']);
+                    array_push($act_exp_task_data['done'], (int) $row['count_tasks']);
                     unset($done_tasks[$key]);
                 } else {
                     array_push($act_exp_task_data['done'], 0);
                 }
             }
         }
+
 
         $actual_expire_task_data[0] = [
             'name' => 'Просроченные',
@@ -296,9 +320,11 @@ class ProjectController extends Controller {
             'name' => 'Завершенные',
             'data' => $act_exp_task_data['done']
         ];
-        /**********************************************************************/
-        
-        
+        /*         * ******************************************************************* */
+
+        dump($actual_expire_task_data);
+        dump($act_exp_sprints);
+
         return $this->render('project/statistics.html.twig', array(
                     'project' => $project,
                     'arr_tasks_categories' => $arr_tasks_categories,

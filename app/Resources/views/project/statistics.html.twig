@@ -14,102 +14,195 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-xs-8 center-stat-container">
+        <div class="col-xs-12 center-stat-container">
 
-            <div id="first-graph" style="width:100%; height:400px;"></div>
+            <div id="first-graph" style="width:100%; height:600px;"></div>
             <br><hr><br>
-            <div id="second-graph" style="width:100%; height:400px;"></div>
+            <div id="second-graph" style="width:100%; height:600px;"></div>
             <br><hr><br>
-            <div id="third-graph" style="width:100%; height:400px;"></div>
+            <div id="third-graph" style="width:100%; height:600px;"></div>
 
         </div>
     </div>
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#first-graph').highcharts({
-                chart: {
-                    type: 'column'
-                },
+        $('#first-graph').highcharts({
+        chart: {
+        type: 'column'
+        },
                 title: {
-                    text: 'Оценочное время / Итоговое время / Разница'
+                text: 'Оценочное время / Итоговое время / Разница'
                 },
                 xAxis: {
-                    categories:{{ arr_tasks_categories|json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+                categories:{{ arr_tasks_categories|json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
                 },
                 yAxis: {
-                    title: {
-                        text: 'Количество часов'
-                    }
+                title: {
+                text: 'Количество часов'
+                }
                 },
                 series: [
-                    {
-                        name: 'Оценочное время',
+                {
+                name: 'Оценочное время',
                         data:{{ task_estimated_data|json_encode() }}
-                    }, {
-                        name: 'Итоговое время',
+                }, {
+                name: 'Итоговое время',
                         data:{{ task_spended_data|json_encode() }}
-                    }, {
-                        name: 'Разница',
+                }, {
+                name: 'Разница',
                         data:{{ task_difference_data|json_encode() }}
-                    }
+                }
                 ]
-            });
-            
-            $('#second-graph').highcharts({
-                chart: {
-                    type: 'bar'
-                },
+        });
+                $('#second-graph').highcharts({
+        chart: {
+        type: 'bar'
+        },
                 title: {
-                    text: 'Занятость пользователей (часов)'
+                text: 'Занятость пользователей (часов)'
                 },
                 xAxis: {
-                    categories:{{ user_time_names |json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+                {#
+                categories:{{ user_time_names |json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+                #}
+                categories:[
+                    "David Jelanin",
+                    "Daniil Kolesnik",
+                    "Bober Mark"
+                ]
                 },
                 yAxis: {
-                    min: 0,
-                    title: {
+                min: 0,
+                        title: {
                         text: 'Количество часов'
-                    }
+                        }
                 },
                 legend: {
-                    reversed: true
+                reversed: true
                 },
                 plotOptions: {
-                    series: {
-                        stacking: 'normal'
-                    }
+                series: {
+                stacking: 'normal'
+                }
                 },
-                series: {{ user_time_data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
-            });
-            
-            $('#third-graph').highcharts({
-                chart: {
-                    type: 'column'
+                {#        
+                series:{{ user_time_data|json_encode(constant('JSON_PRETTY_PRINT'))|raw }}
+                 #}
+                series:[
+                {
+                    "name": "\u041d\u0435\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u043d\u044b\u0435",
+                    "data": [
+                        5,
+                        0,
+                        2
+                    ]
                 },
+                {
+                    "name": "17 \u043c\u0430\u044f 2015 \u2014 23 \u043c\u0430\u044f 2015",
+                    "data": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "name": "31 \u043c\u0430\u044f 2015 \u2014 6 \u0438\u044e\u043d\u044f 2015",
+                    "data": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "name": "24 \u043c\u0430\u044f 2015 \u2014 30 \u043c\u0430\u044f 2015",
+                    "data": [
+                        0,
+                        0,
+                        0
+                    ]
+                },
+                {
+                    "name": "21 \u0438\u044e\u043d\u044f 2015 \u2014 27 \u0438\u044e\u043d\u044f 2015",
+                    "data": [
+                        2,
+                        4,
+                        4
+                    ]
+                },
+                {
+                    "name": "28 \u0438\u044e\u043d\u044f 2015 \u2014 4 \u0438\u044e\u043b\u044f 2015",
+                    "data": [
+                        7,
+                        5,
+                        4
+                    ]
+                }
+            ]
+                             
+        });
+        
+        
+                $('#third-graph').highcharts({
+        chart: {
+        type: 'column'
+        },
                 title: {
-                    text: 'Просроченные задачи / Актуальные задачи / Решенные задачи'
+                text: 'Просроченные задачи / Актуальные задачи / Решенные задачи'
                 },
                 xAxis: {
-                    categories: {{ act_exp_sprints|json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+                categories:{{ act_exp_sprints|json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
                 },
                 yAxis: {
-                    min: 0,
-                    title: {
+                min: 0,
+                        title: {
                         text: 'Отношение количества задач '
-                    }
+                        }
                 },
                 tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
-                    shared: true
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.percentage:.0f}%)<br/>',
+                        shared: true
                 },
                 plotOptions: {
-                    column: {
-                        stacking: 'percent'
+                column: {
+                stacking: 'percent'
+                }
+                },                        {#        
+        series: {{ actual_expire_task_data |json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+        #}
+                    series: [
+                    {
+                    "name": "\u041f\u0440\u043e\u0441\u0440\u043e\u0447\u0435\u043d\u043d\u044b\u0435",
+                            "data": [
+                                    1,
+                                    2,
+                                    0,
+                                    0,
+                                    1
+                            ]
+                    },
+                    {
+                    "name": "\u0410\u043a\u0442\u0443\u0430\u043b\u044c\u043d\u044b\u0435",
+                            "data": [
+                                    0,
+                                    1,
+                                    1,
+                                    2,
+                                    4
+                            ]
+                    },
+                    {
+                    "name": "\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0435",
+                            "data": [
+                                    4,
+                                    3,
+                                    3,
+                                    5,
+                                    2
+                            ]
                     }
-                },
-                series: {{ actual_expire_task_data |json_encode(constant('JSON_PRETTY_PRINT'))|raw}}
+                    ]
             });
-        });
+            });
     </script>
 {% endblock %}

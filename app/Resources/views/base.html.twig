@@ -37,11 +37,14 @@
                 {% block header %}
                     <div class="navbar navbar-default">
                         <div class="container">
-                            <a href="{{path('project_index')}}" class="navbar-brand">Watchtower</a>
+                            <a href="{{path('project_index')}}" class="navbar-brand">Трекер задач</a>
                             <ul class="nav navbar-nav">
                                 {% block navbar %}
+
                                     <li><a href="{{ path('project_index') }}">Проекты</a></li>
-                                    <li><a href="{{ path('user') }}">Пользователи</a></li>
+                                        {% if is_granted('ROLE_MANAGER') %}
+                                        <li><a href="{{ path('user') }}">Пользователи</a></li>
+                                        {% endif %}
                                     <span class="navbar-additional-pills">
                                         <ul class="nav navbar-nav">
                                             {% block additional_navbar_pills %}
@@ -52,7 +55,9 @@
                             </ul>
                             <ul class="nav navbar-nav navbar-right">
                                 <li class="nav-bar-logout-container">
-                                    <span class="top-navbar-text">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span>
+                                    <span class="top-navbar-text">
+                                        {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}
+                                    </span>
                                     <a class="nav-bar-logout" href="{{ path('fos_user_security_logout') }}">Выйти
                                         <span class="glyphicon glyphicon-align-left glyphicon-log-out glyphicon-white" aria-hidden="true"></span>
                                     </a>
@@ -75,7 +80,7 @@
                     {% endif %}
                 </div>
                 #}
-                
+
                 <div class="container">
 
                     <div class="breadcrumps-container">

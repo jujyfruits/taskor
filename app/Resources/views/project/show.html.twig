@@ -15,11 +15,13 @@
 {% block breadcrumps %}
     <div class="row">
         <div class="col-sm-6">
-            <h3 style="margin: 5px 0;">{{ project.Name }}</h3>
+            <h3 style="margin: 5px 0;">Проект - {{ project.Name }}</h3>
         </div>
         <div class="col-sm-6">
             <ul class="pull-right project-nav-bar">
+                {#
                 <li><a class="finish-button" href="{{ path("project_statistic",{'id':project.id}) }}">Статистика проекта</a></li>
+                #}
                 <li><a class="success-button" href="{{ path("project_show_done",{'id':project.id}) }}">Выполненные задачи</a></li>
             </ul>
         </div>

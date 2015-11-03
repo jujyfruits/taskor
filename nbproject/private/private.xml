@@ -3,8 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/mark/taskor/app/Resources/FOSUserBundle/views/Security/login.html.twig</file>
+            <file>file:/home/mark/taskor/app/Resources/FOSUserBundle/views/layout.html.twig</file>
             <file>file:/home/mark/taskor/src/AppBundle/Controller/UserController.php</file>
+            <file>file:/home/mark/taskor/app/Resources/views/project/show.html.twig</file>
+            <file>file:/home/mark/taskor/web/bundles/app/css/custom.css</file>
             <file>file:/home/mark/taskor/src/AppBundle/Controller/TaskController.php</file>
+            <file>file:/home/mark/taskor/app/Resources/FOSUserBundle/views/Registration/register_content.html.twig</file>
+            <file>file:/home/mark/taskor/app/Resources/FOSUserBundle/views/Registration/register.html.twig</file>
         </group>
     </open-files>
 </project-private>

@@ -2,39 +2,58 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
 
 {% block fos_user_content %}
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
 
-    <div class="row">
-
-        <div class="col-sm-4 login-form-container">
-
-            <div class="login-form-header">
-                Пожалуйста войдите, или <a href="{{ path('fos_user_registration_register') }}">зарегистрируйтесь</a>
+    <div class="login-form-container">
+        {% if error %}
+            <div class="alert-warning">
+                <p>{{ error.messageKey|trans(error.messageData, 'security') }}</p>
             </div>
-            <hr class="hr-or">
-            <form action="{{ path('fos_user_security_check') }}" method="POST" class="fos_user_login">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
-                <div class="form-group">
-                    <label for="inputUsernameEmail">Имя пользователя</label>
-                    <input type="text" id="inputUsernameEmail" name="_username" value="{{ last_username }}" required="required" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <a class="pull-right" href="#">Забыли пароль?</a>
-                    <label for="inputPassword">Пароль</label>
-                    <input type="password" class="form-control" id="inputPassword" name="_password" required="required" />
-                </div>
-                <div class="checkbox pull-right">
-                    <label>
-                        <input type="checkbox">
-                        Запомнить меня </label>
-                </div>
-                <button class="simple-button" type="submit" class="btn btn btn-primary">
-                    Войти
-                </button>
-            </form>
+        {% endif %}
+
+        <div class="login-form-header">
+            Пожалуйста войдите, или <a href="{{ path('fos_user_registration_register') }}">зарегистрируйтесь</a>
         </div>
+        <hr class="hr-or">
+        <form action="{{ path('fos_user_security_check') }}" method="POST" class="fos_user_login">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+            <div class="form-group">
+                <label for="inputUsernameEmail">Имя пользователя</label>
+                <input type="text" id="inputUsernameEmail" name="_username" value="{{ last_username }}" required="required" class="form-control" />
+            </div>
+            <div class="form-group">
+                <a class="pull-right has-tooltip" data-original-text="-u testuser <br/> -p 1984" href="#">Нужен логин или пароль?</a>
+                <label for="inputPassword">Пароль</label>
+                <input type="password" class="form-control" id="inputPassword" name="_password" required="required" />
+            </div>
+            <div class="checkbox pull-right">
+                <label>
+                    <input type="checkbox">
+                    Запомнить меня </label>
+            </div>
+            <button class="simple-button" type="submit" class="btn btn btn-primary">
+                Войти
+            </button>
+        </form>
     </div>
+
+
+    <script>
+        $(document).ready(function () {
+            $("body").on("click", '.has-tooltip', function () {
+                var msg = $('<div class="tt-tooltip">' + $(this).attr('data-original-text') + '<div class="tt-tooltip-arrow"></div></div>');
+                msg.insertAfter($(this));
+                msg.css({
+                    top: $(this).position().top - msg.outerHeight() - 5,
+                    left: $(this).position().left + $(this).outerWidth() / 2 - msg.outerWidth() / 2
+                });
+                msg.fadeIn("slow", function () {
+                    setTimeout(function () {
+                        msg.fadeOut("slow", function () {
+                        });
+                    }, 1400)
+                });
+            });
+        });
+    </script>
 {% endblock fos_user_content %}
 

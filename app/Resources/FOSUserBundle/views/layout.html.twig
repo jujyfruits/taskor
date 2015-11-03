@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="ru">
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <link rel="stylesheet" href="{{ asset('bundles/app/css/bootstrap.css') }}" />
     <link rel="stylesheet" href="{{ asset('bundles/app/css/custom.css') }}" />
 
+    {% block javascripts %} 
+        <script type="text/javascript" src="{{ asset('bundles/app/js/jquery-1.11.3.min.js') }}"></script>
+    {% endblock javascripts %}
     <br>
     <div class="usual-container">
-        {% block content %}
-        {% block fos_user_content %}{% endblock %}
+
+        <div class="row"> 
+            <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+                {% block content %}
+                {% endblock %}
+                {% block fos_user_content %}
+                {% endblock %}
+            </div>
+        </div>
     </div>
-{% endblock %}
 </html>

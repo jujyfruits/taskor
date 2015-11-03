@@ -33,6 +33,10 @@ body{
     font-family: arial , Helvetica ,sans-serif;
 }
 
+a:focus {
+    outline: none;
+}
+
 .usual-container{
     margin-right: auto;
     margin-left: auto;
@@ -262,25 +266,13 @@ a#archive-project{
 .no-tasks-container{
     min-height: 50px;
     line-height: 50px;
-    background: repeating-linear-gradient(
-        -55deg,
-        #222,
-        #222 10px,
-        #333 10px,
-        #333 20px
-        );
+    background: rgba(0,0,0,0.5);
 }
 
 .no-sprints-container{
     min-height: 50px;
     line-height: 50px;
-    background: repeating-linear-gradient(
-        -55deg,
-        #444,
-        #444 10px,
-        #555 10px,
-        #555 20px
-        );
+    background: rgba(0,0,0,0.5);
 }
 
 .task-subtask-link-container{
@@ -577,11 +569,11 @@ table.full-task-view tr td:first-child{
 }
 
 .full-task-subtask-container .task-full-container-wrapper{
-box-shadow: 0px 6px 12px -2px rgba(0, 0, 0, 0.92);
+    box-shadow: 0px 6px 12px -2px rgba(0, 0, 0, 0.92);
 }
 
 .owner-button-container.full-task-button-container{
-   margin-left: 2.5em;
+    margin-left: 2.5em;
 }
 
 .login-form-header{
@@ -606,8 +598,6 @@ box-shadow: 0px 6px 12px -2px rgba(0, 0, 0, 0.92);
 }
 
 .login-form-container{
-    float: none;
-    margin: 0 auto;
     border:1px solid #45474B; 
     padding: 8px;
 }
@@ -636,4 +626,35 @@ ul.project-nav-bar>li>a:hover,
 ul.project-nav-bar>li>a:focus {
     text-decoration: none;
     outline: none;
+}
+
+.tt-tooltip{
+    display: none;
+    width: auto;
+    height: auto;
+    max-width: 260px;
+    border: 1px solid #45474B;
+    border-radius: 4px;
+    background-color: #4C4F53;
+    position: absolute;
+    padding: 10px;
+    color: white;
+}
+
+.tt-tooltip-arrow{
+    width: 0px;
+    height: 0px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #4C4F53;
+    position: absolute;
+    top: 100%;
+    left: calc(50% - 5px);
+    transform: rotate(180deg) ;
+    -webkit-transform: rotate(180deg) ;
+    -moz-transform: rotate(180deg) ;
+    -o-transform: rotate(180deg) ;
+    -ms-transform: rotate(180deg) ;
+
+
 }

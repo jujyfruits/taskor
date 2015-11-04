@@ -322,8 +322,8 @@ class ProjectController extends Controller {
         ];
         /*         * ******************************************************************* */
 
-        dump($actual_expire_task_data);
-        dump($act_exp_sprints);
+        //dump($actual_expire_task_data);
+        //dump($act_exp_sprints);
 
         return $this->render('project/statistics.html.twig', array(
                     'project' => $project,

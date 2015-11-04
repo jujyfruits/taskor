@@ -38,7 +38,7 @@ class UserController extends Controller {
         $result = $qb->getQuery();
         $result1 = $result->getResult();
 
-        dump($result1);
+        //dump($result1);
 
         return array(
             'entities' => $entities,

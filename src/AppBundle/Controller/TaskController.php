@@ -137,7 +137,7 @@ class TaskController extends Controller {
             }
         }
         $events = $em->getRepository('AppBundle:Log')->getTaskLatestEventsByProjects($project_id, $task_id);
-        dump($events);
+        //dump($events);
         $user = $this->container->get('security.context')->getToken()->getUser();
 
         return $this->render('task/show.html.twig', array(

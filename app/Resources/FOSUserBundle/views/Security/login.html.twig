@@ -3,6 +3,7 @@
 
 {% block fos_user_content %}
 
+{{ app.request.getLocale() }}
     <div class="login-form-container">
         {% if error %}
             <div class="alert-warning">

@@ -176,7 +176,9 @@ class TaskController extends Controller {
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
             if ($form->isValid()) {
-                if ($sprint_number = $form['sprint']->getData()) {
+                $sprint = $form['sprint']->getData();
+                if (isset($sprint)) {
+                    $sprint_number = $form['sprint']->getData();
                     $sprint = $em->getRepository('AppBundle:Sprint')->getProjectSprintByNumber($project_id, $sprint_number);
                     if (empty($sprint)) {
                         $sprint = new Sprint();

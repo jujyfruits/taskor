@@ -40,9 +40,10 @@ class ProjectRepository extends EntityRepository {
                 ->from('AppBundle\Entity\Project', 'Project')
                 ->leftJoin('Project.user', 'User')
                 ->where('User.id = :id')
-                ->andWhere('Project.archived is null')
+                ->andWhere('Project.archived = FALSE')
                 ->setParameter('id', $id)
         ;
+        dump($qb);
 
         $query = $qb->getQuery();
         return $query->getResult();
@@ -56,7 +57,7 @@ class ProjectRepository extends EntityRepository {
                 ->from('AppBundle\Entity\Project', 'Project')
                 ->leftJoin('Project.user', 'User')
                 ->where('User.id = :id')
-                ->andWhere('Project.archived IS NOT NULL')
+                ->andWhere('Project.archived != FALSE')
                 ->setParameter('id', $id)
         ;
 

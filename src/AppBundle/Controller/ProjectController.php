@@ -16,7 +16,7 @@ class ProjectController extends Controller {
      * @Route("/", name="project_index")
      */
     public function indexAction() {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $projects = $em->getRepository('AppBundle:Project')->findAll();
         $user = $this->container->get('security.context')->getToken()->getUser();
         $user_projects = $em->getRepository('AppBundle:Project')->getUserProjects($user->getId());
@@ -43,9 +43,10 @@ class ProjectController extends Controller {
         if ($request->getMethod() == 'POST') {
             $form->bind($request);
             if ($form->isValid()) {
-                $em = $this->getDoctrine()->getEntityManager();
+                $em = $this->getDoctrine()->getManager();
                 $user = $this->container->get('security.context')->getToken()->getUser();
                 $project->addUser($user);
+                $user->addProject($project);
                 $em->persist($project);
                 $em->flush();
                 return $this->redirectToRoute('project_index');
@@ -58,7 +59,7 @@ class ProjectController extends Controller {
      * @Route("/projects/archived/", name="projects_archived")
      */
     public function archivedProjectsAction() {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $user = $this->container->get('security.context')->getToken()->getUser();
         $user_projects = $em->getRepository('AppBundle:Project')->getArchivedUserProjects($user->getId());
 
@@ -71,7 +72,7 @@ class ProjectController extends Controller {
      * @Route("/project/{id}/invite", requirements={"id" = "\d+"}, name="invite_to_project")
      */
     public function inviteToProjectAction($id) {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
@@ -112,7 +113,7 @@ class ProjectController extends Controller {
      * @Route("/project/{id}/", requirements={"id" = "\d+"}, name="project_show")
      */
     public function showAction($id) {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $project = $em->getRepository('AppBundle:Project')->find($id);
 
@@ -125,7 +126,7 @@ class ProjectController extends Controller {
         $expired_sprints = $em->getRepository('AppBundle:Sprint')->getExpiredSprintsTasksByProjectId($id);
 
         $unassigned_tasks = $em->getRepository('AppBundle:Task')->getUnassignedTasksByProjectId($id);
-
+        
         $user = $this->container->get('security.context')->getToken()->getUser()->getUserName();
 
         return $this->render('project/show.html.twig', array(
@@ -141,7 +142,7 @@ class ProjectController extends Controller {
      * @Route("/project/{id}/done", requirements={"id" = "\d+"}, name="project_show_done")
      */
     public function showDoneAction($id) {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $project = $em->getRepository('AppBundle:Project')->find($id);
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
@@ -163,7 +164,7 @@ class ProjectController extends Controller {
      * @Route("/project/{id}/statistics", requirements={"id" = "\d+"}, name="project_statistic")
      */
     public function statisticsAction($id) {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
 
         $project = $em->getRepository('AppBundle:Project')->find($id);
 
@@ -266,7 +267,7 @@ class ProjectController extends Controller {
         $exp_task_data = array();
         $act_exp_sprints = array();
 
-        
+
         $act_exp_task_data['expired'] = array();
         foreach ($project->getSprint() as $sprint) {
             array_push($act_exp_sprints, (string) $sprint);
@@ -342,7 +343,7 @@ class ProjectController extends Controller {
      * @Route("/project/{id}/edit", requirements={"id" = "\d+"}, name="project_edit")
      */
     public function editAction($id) {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
@@ -368,7 +369,7 @@ class ProjectController extends Controller {
      */
     public function ajaxArchiveProjectAction(Request $request) {
         $id = $request->get('project_id');
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));
         if (!$project) {
             throw $this->createNotFoundException('Unable to find requested project.');
@@ -389,7 +390,7 @@ class ProjectController extends Controller {
      *
      *
       public function inviteToProjectAction($id) {
-      $em = $this->getDoctrine()->getEntityManager();
+      $em = $this->getDoctrine()->getManager();
       $project = $em->getRepository('AppBundle:Project')->findOneBy(array('id' => $id));
       if (!$project) {
       throw $this->createNotFoundException('Unable to find requested project.');

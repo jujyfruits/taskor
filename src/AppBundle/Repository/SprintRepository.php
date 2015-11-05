@@ -13,10 +13,24 @@ use Doctrine\ORM\EntityRepository;
 class SprintRepository extends EntityRepository {
 
     public function getProjectSprintByNumber($project_id, $sprint_number) {
-        return $this->getEntityManager()
-                        ->createQuery("select s from AppBundle\Entity\Sprint s where "
-                                . "s.project = $project_id and s.number = $sprint_number")
-                        ->getOneOrNullResult();
+        /*
+          return $this->getEntityManager()
+          ->createQuery("select s from AppBundle\Entity\Sprint s where "
+          . "s.project = $project_id and s.number = $sprint_number")
+          ->getOneOrNullResult();
+         */
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb
+                ->select('Sprint')
+                ->from('AppBundle\Entity\Sprint', 'Sprint')
+                ->where('Sprint.project = :project_id')
+                ->andWhere('Sprint.number = :sprint_number')
+                ->setParameters(array(
+                    'sprint_number' => $sprint_number,
+                    'project_id' => $project_id));
+        
+        $query = $qb->getQuery();;
+        return $query->getOneOrNullResult();
     }
 
     public function getActualSprintsTasksByProjectId($project_id) {
@@ -58,11 +72,11 @@ class SprintRepository extends EntityRepository {
         $query = $qb->getQuery();
         return $query->getResult();
     }
-    
+
     public function getStatSprintsDoneTasksByProjectId($project_id) {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
-                ->select('count(Task.id) as count_tasks','Sprint.id as sprint_id')
+                ->select('count(Task.id) as count_tasks', 'Sprint.id as sprint_id')
                 ->from('AppBundle\Entity\Sprint', 'Sprint')
                 ->leftJoin('Sprint.task', 'Task')
                 ->Where('Sprint.project= :id')
@@ -75,7 +89,7 @@ class SprintRepository extends EntityRepository {
         $query = $qb->getQuery();
         return $query->getResult();
     }
-    
+
     public function getExpiredSprintsDoneTasksByProjectId($project_id) {
         $date = date('Y-m-d');
 
@@ -96,7 +110,7 @@ class SprintRepository extends EntityRepository {
         $query = $qb->getQuery();
         return $query->getResult();
     }
-    
+
     public function getActualSprintsDoneTasksByProjectId($project_id) {
         $date = date('Y-m-d');
 

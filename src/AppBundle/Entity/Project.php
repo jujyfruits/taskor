@@ -28,7 +28,7 @@ class Project {
     protected $description;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=false)
      */
     protected $archived;
 

@@ -3,7 +3,6 @@
 
 {% block fos_user_content %}
 
-{{ app.request.getLocale() }}
     <div class="login-form-container">
         {% if error %}
             <div class="alert-warning">
@@ -19,12 +18,12 @@
             <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
             <div class="form-group">
                 <label for="inputUsernameEmail">Имя пользователя</label>
-                <input type="text" id="inputUsernameEmail" name="_username" value="{{ last_username }}" required="required" class="form-control" />
+                <input value="testuser" type="text" id="inputUsernameEmail" name="_username" value="{{ last_username }}" required="required" class="form-control" />
             </div>
             <div class="form-group">
                 <a class="pull-right has-tooltip" data-original-text="-u testuser <br/> -p 1984" href="#">Нужен логин или пароль?</a>
                 <label for="inputPassword">Пароль</label>
-                <input type="password" class="form-control" id="inputPassword" name="_password" required="required" />
+                <input value="1984" type="password" class="form-control" id="inputPassword" name="_password" required="required" />
             </div>
             <div class="checkbox pull-right">
                 <label>

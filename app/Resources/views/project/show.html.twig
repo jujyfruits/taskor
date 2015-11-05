@@ -5,10 +5,14 @@
 {% endblock title %}
 
 {% block additional_navbar_pills %}
-    {% if is_granted('ROLE_MANAGER') %}
+    
+    {% if is_granted('ROLE_USER') %}
         <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
+    {% endif %}
+    
+    {% if is_granted('ROLE_MANAGER') %}
         <li><a href="{{ path('invite_to_project',{'id':project.id}) }}">Добавить участников</a></li>
-        {% endif %}
+    {% endif %}
 
 {% endblock additional_navbar_pills %}
 
@@ -114,7 +118,13 @@
     <script>
         $(document).ready(function () {
 
-        $(".nano").nanoScroller();
+        $('.container').on('click', '.parent-task-toggle-children', function (e) {
+        var icon = $(this).find('span.glyphicon');
+                icon.toggleClass('flip-icon');
+        })
+
+
+                $(".nano").nanoScroller();
                 // Modal form handler
                 $('#modal-container').on("click", '.modal-button-change-state', function () {
         var new_state = $(this).attr("value");

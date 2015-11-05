@@ -5,10 +5,14 @@
 {% endblock %}
 
 {% block additional_navbar_pills %}
-    {% if is_granted('ROLE_MANAGER') %}
-        <li><a href="{{ path('task_edit',{'project_id':project.id,'task_id':task.Id}) }}">Редактировать</a></li>
+    
+    {% if is_granted('ROLE_USER') %}
         <li><a href="{{ path('task_create',{'project_id':project.id}) }}">Создать новую задачу</a></li>
         <li><a href="{{ path('subtask_create',{'project_id':project.id,'parent_task_id':task.Id}) }}">Создать подзадачу текущей</a></li>
+    {% endif %}
+    
+    {% if is_granted('ROLE_MANAGER') %}
+        <li><a href="{{ path('task_edit',{'project_id':project.id,'task_id':task.Id}) }}">Редактировать</a></li>
         {% endif %}
     {% endblock %}
 

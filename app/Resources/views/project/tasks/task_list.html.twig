@@ -2,7 +2,7 @@
 
     {% if ((task.getChildren().count))%} <div class="parent-task"></div> {% endif %}
     {% if task.getParent() %}  <div class="child-task"></div> {% endif %}
-    <div style="margin-left:5px;margin-right:-5px;" class="row">
+    <div style="margin-left:-10px;margin-right:-10px;" class="row">
 
         <div class="{{ task.getUser ? 'col-xs-7' :'col-xs-9' }}">
             {% if is_granted('ROLE_MANAGER') %}
@@ -37,8 +37,9 @@
             {% if task.getChildren().count %}
                 <a data-toggle="collapse" data-target=".{{task.Id}}-parent-task-child" id="{{task.Id}}-parent-task" class="parent-task-toggle-children">
                     <span class="glyphicon glyphicon-triangle-bottom"></span>
-                    {{task.getChildren().count}} 
+                    <span>{{task.getChildren().count}} 
                     {{ task.getChildren().count|subtaskrus }}
+                    </span>
                 </a>
             {% endif %}
         </div>

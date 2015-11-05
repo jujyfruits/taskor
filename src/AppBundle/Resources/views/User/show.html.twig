@@ -5,9 +5,8 @@
 {% endblock %}
 
 {% block additional_navbar_pills %}
-    {% if is_granted('ROLE_MANAGER') %}
+    {% if is_granted('ROLE_ADMIN') %}
         <li><a href="{{ path('user_edit', { 'id': entity.id }) }}">Редактировать</a></li>
-        <li><a href="{{ path('user_new') }}">Добавить нового пользователя</a></li>
         {% endif %}
     {% endblock %}
 
@@ -56,5 +55,7 @@
         </tbody>
     </table>
 
+    {% if is_granted('ROLE_ADMIN') %}
         {{ form(delete_form) }}
+    {% endif %}
 {% endblock %}

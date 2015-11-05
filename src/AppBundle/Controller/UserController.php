@@ -101,6 +101,7 @@ class UserController extends Controller {
      * @Method("GET")
      * @Template()
      */
+    /*
     public function newAction() {
         $entity = new User();
         $form = $this->createCreateForm($entity);
@@ -109,7 +110,7 @@ class UserController extends Controller {
             'entity' => $entity,
             'form' => $form->createView(),
         );
-    }
+    }*/
 
     /**
      * Finds and displays a User entity.

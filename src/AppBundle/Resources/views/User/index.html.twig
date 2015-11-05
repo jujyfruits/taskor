@@ -5,10 +5,8 @@
 {% endblock %}
 
 {% block additional_navbar_pills %}
-    {% if is_granted('ROLE_MANAGER') %}
-        <li><a href="{{ path('user_new') }}">Добавить нового пользователя</a></li>
-        {% endif %}
-    {% endblock %}
+
+{% endblock %}
 
 {% block breadcrumps %}
     <h3>Список пользователей</h3>

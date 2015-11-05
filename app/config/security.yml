@@ -46,7 +46,7 @@ security:
         - { path: ^/project/.+/task/edit/, role: ROLE_MANAGER }
         - { path: ^/project/.+/task/.+/new, role: ROLE_MANAGER }
         - { path: ^/project/.+/task/new, role: ROLE_MANAGER }
-        - { path: ^/project/task/ajaxchangestate, role: ROLE_MANAGER }
+        - { path: ^/project/task/ajaxchangestate, role: ROLE_USER }
         - { path: ^/user, role: ROLE_MANAGER }
         - { path: ^/project/new, role: ROLE_MANAGER }
         - { path: ^/project/archive, role: ROLE_MANAGER }

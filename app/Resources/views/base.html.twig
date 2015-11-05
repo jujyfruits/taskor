@@ -12,23 +12,17 @@
 
 
         {% block javascripts %} 
-            
-            {% javascripts 'bundles/app/js/jquery-1.11.3.min.js' %}
-            <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-            {% javascripts 'bundles/app/js/bootstrap.min.js' %}
-            <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-            {% javascripts 'bundles/app/js/jquery.validate.min.js' %}
-            <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-            {% javascripts 'bundles/app/js/jquery.nanoscroller.min.js' %}
-            <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-            {% javascripts 'bundles/app/js/highcharts.js' %}
-            <script type="text/javascript" src="{{ asset_url }}"></script>
-            {% endjavascripts %}
-            
+
+            <script type="text/javascript" src="{{ asset('bundles/app/js/jquery-1.11.3.min.js') }}"></script>
+
+            <script type="text/javascript" src="{{ asset('bundles/app/js/bootstrap.min.js') }}"></script>
+
+            <script type="text/javascript" src="{{ asset('bundles/app/js/jquery.validate.min.js') }}"></script>
+
+            <script type="text/javascript" src="{{ asset('bundles/app/js/jquery.nanoscroller.min.js') }}"></script>
+
+            <script type="text/javascript" src="{{ asset('bundles/app/js/highcharts.js') }}"></script>
+
             {#
             {% javascripts '@AppBundle/Resources/public/js/jquery-1.11.3.min.js' %}
             <script type="text/javascript" src="{{ asset_url }}"></script>

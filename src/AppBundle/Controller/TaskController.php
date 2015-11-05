@@ -206,7 +206,7 @@ class TaskController extends Controller {
                 $em->flush();
                 $task_id = $task->getId();
                 if ($form->get('saveAndAdd')->isClicked()) {
-                    return $this->redirectToRoute('task_create_child', array(
+                    return $this->redirectToRoute('subtask_create', array(
                                 'project_id' => $project_id,
                                 'parent_task_id' => $task_id));
                 } else {

@@ -1,4 +1,5 @@
 imports:
+    - { resource: parameters_prod.yml }
     - { resource: config.yml }
 
 #framework:

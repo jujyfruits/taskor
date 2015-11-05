@@ -44,6 +44,19 @@
 
         <title>{% block title %} Task Tracker {% endblock title %}</title>
     {% endblock head %}
+
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-msg flash-notice alert-info">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    {% for flashMessage in app.session.flashbag.get('error') %}
+        <div class="flash-msg flash-error alert-warning">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+
     {% block body_container %}
         <body>
             {% block body %}
@@ -111,6 +124,18 @@
                     {% endblock  %}
 
                 </div>
+                <script>
+                    $(document).ready(function () {
+                        var messages = $('.flash-msg');
+                        messages.addClass('visible-msg');
+                        setTimeout(function () {
+                            messages.removeClass('visible-msg');
+                            setTimeout(function () {
+                                messages.remove();
+                            }, 600)
+                        }, 3000)
+                    });
+                </script>
             {% endblock body %}
         </body>
     {% endblock body_container %}

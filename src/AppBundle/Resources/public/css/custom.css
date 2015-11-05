@@ -321,7 +321,36 @@ a#archive-project{
     background-color: #D6DDE7;
 }
 
+.flash-msg{
+    padding: 20px;
+    position: absolute;
+    width: 260px;
+    height: 108px;
+    z-index: 100;
+    border-radius: 5px;
+    right: -270px;
+    top: 0;
 
+    -webkit-transition: all 600ms ease-out;
+    -moz-transition: all 600ms ease-out;
+    -o-transition: all 600ms ease-out;
+    transition: all 600ms ease-out;
+
+    transform: translate(0, 55px);
+    -webkit-transform: translate(0, 55px);
+    -moz-transform: translate(0, 55px);
+    -o-transform: translate(0, 55px);
+    -ms-transform: translate(0, 55px);
+}
+
+.flash-msg.visible-msg{
+    right: 0;
+    transform: translate(-10px, 55px);
+    -webkit-transform: translate(-10px, 55px);
+    -moz-transform: translate(-10px, 55px);
+    -o-transform: translate(-10px, 55px);
+    -ms-transform: translate(-10px, 55px);
+}
 
 /*  
 .alert-warning {

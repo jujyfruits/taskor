@@ -10,6 +10,7 @@ use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Sprint;
 use AppBundle\Entity\Log;
+use AppBundle\Helper\ObsceneCensorRus;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\TaskType;
 
@@ -194,6 +195,19 @@ class TaskController extends Controller {
                     $task->setSprint($sprint);
                     $em->persist($sprint);
                 }
+
+                if (!ObsceneCensorRus::isAllowed($task->getName()) || !ObsceneCensorRus::isAllowed($task->getDescription())) {
+                    $this->addFlash('error', "Это не те слова которые тебе нужны");
+                    if (!empty($parent_task_id)) {
+                        return $this->redirectToRoute('subtask_create', array(
+                                    'project_id' => $project_id,
+                                    'parent_task_id' => $task_id));
+                    } else {
+                        return $this->redirectToRoute('task_create', array(
+                                    'project_id' => $project_id));
+                    }
+                }
+
                 $task->setCreatedAt(new \DateTime());
                 $task->setProject($project);
                 $task->setState('Unstarted');

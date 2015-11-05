@@ -43,7 +43,6 @@ class ProjectRepository extends EntityRepository {
                 ->andWhere('Project.archived = FALSE')
                 ->setParameter('id', $id)
         ;
-        dump($qb);
 
         $query = $qb->getQuery();
         return $query->getResult();

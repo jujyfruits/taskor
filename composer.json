@@ -25,7 +25,8 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "twbs/bootstrap": "dev-master",
         "symfony/finder": "^2.7",
-        "symfony/intl": "^2.7"
+        "symfony/intl": "^2.7",
+        "ext-intl": "^1.1"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

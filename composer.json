@@ -23,7 +23,9 @@
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
-        "twbs/bootstrap": "dev-master"
+        "twbs/bootstrap": "dev-master",
+        "symfony/finder": "^2.7",
+        "symfony/intl": "^2.7"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

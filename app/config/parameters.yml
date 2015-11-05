@@ -1,31 +1,11 @@
 # This file is auto-generated during the composer install
 parameters:
-    
-    #postgres heroku
-    database_driver:    pdo_pgsql
-    database_host:      ec2-107-21-221-107.compute-1.amazonaws.com
-    database_port:      5432
-    database_name:      d5upumcrrj8260
-    database_user:      hxuostxfwpuhmx
-    database_password:  f_00ORvhGRw9TzArnr6abO0qPS
-    
-    #postgres local
-    #database_driver:    pdo_pgsql
-    #database_host:      127.0.0.1
-    #database_port:      null
-    #database_name:      ttbase
-    #database_user:      ttuser
-    #database_password:  str60int5
-    
-    #mysql
-    #database_driver: pdo_mysql
-    #database_host: 127.0.0.1
-    #database_port: null
-    #database_name: symfony
-    #database_user: root
-    #database_password: str60int5
-    
-    
+    database_driver: pdo_pgsql
+    database_host: ec2-107-21-221-107.compute-1.amazonaws.com
+    database_port: 5432
+    database_name: d5upumcrrj8260
+    database_user: hxuostxfwpuhmx
+    database_password: f_00ORvhGRw9TzArnr6abO0qPS
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: null

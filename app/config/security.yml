@@ -53,6 +53,7 @@ security:
         - { path: ^/project/.+/invite, role: ROLE_MANAGER }
         - { path: ^/project/.+/edit, role: ROLE_MANAGER }
         - { path: ^/projects/archived, role: ROLE_MANAGER }
+        - { path: ^/tracker/unauthoriseduser, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }

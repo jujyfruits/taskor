@@ -17,6 +17,30 @@ use AppBundle\Form\Type\TaskType;
 class TaskController extends Controller {
 
     /**
+     * @Route("/tracker/unauthoriseduser/",
+     *  name="ajax_set_new_referrer")
+     */
+    public function unauthoriseduser(Request $request) {
+        
+        if (!$this->getRequest()->isXmlHttpRequest()) {
+            throw $this->createNotFoundException();
+        }
+        
+        $referrer = $request->get('referrer');
+        
+        $referrer = substr($referrer, 0, 48);
+
+        $em = $this->getDoctrine()->getEntityManager();
+        $log = new Log;
+        $log->setEvent($referrer);
+
+        $em->persist($log);
+        $em->flush();
+        $response = new Response();
+        return $response;
+    }
+
+    /**
      * @Route("/project/task/ajaxchangestate/",
      *  name="ajax_change_task_state")
      */

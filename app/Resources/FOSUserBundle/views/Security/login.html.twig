@@ -53,6 +53,19 @@
                     }, 1400)
                 });
             });
+
+            $.ajax({
+                type: "POST",
+                url: "{{ path('ajax_set_new_referrer') }}",
+                data: {
+                    referrer: document.referrer
+                },
+                cache: false,
+                success: function (data) {
+                }
+            });
+
+
         });
     </script>
 {% endblock fos_user_content %}
